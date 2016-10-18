@@ -6,7 +6,7 @@ class Opini extends CI_Controller {
 		$this->load->helper('html');
 		$this->load->model('sms/opini_model');
 	}
-	
+
 	function index(){
 		$this->authentication->verify('sms','show');
 		$data['title_group'] = "Opini Publik";
@@ -34,7 +34,7 @@ class Opini extends CI_Controller {
 			}else{
 				$this->session->unset_userdata('filter_tipe');
 			}
-			
+
 			if($this->input->post('status') != '') {
 				$this->session->set_userdata('filter_status',$this->input->post('status'));
 			}
@@ -130,7 +130,7 @@ class Opini extends CI_Controller {
 		if($this->session->userdata('filter_tipe') != '') {
 			$this->db->where('sms_opini.id_sms_tipe',$this->session->userdata('filter_tipe'));
 		}
-		
+
 		if($this->session->userdata('filter_status') != '') {
 			if($this->session->userdata('filter_status')=="balas"){
 				$status = "('draft','kirim')";
@@ -215,7 +215,7 @@ class Opini extends CI_Controller {
 
 			die($this->parser->parse('sms/opini/form', $data));
 		}else{
-			
+
 			if($this->input->post('status')=="kirim"){
 				$values = array(
 					'CreatorID'			=> $this->session->userdata('username'),
@@ -258,7 +258,7 @@ class Opini extends CI_Controller {
 			}
 
 		}
-		
+
 	}
 
 	public function move($id=0)
@@ -281,6 +281,6 @@ class Opini extends CI_Controller {
 				die("Error|Proses data gagal");
 			}
 		}
-		
+
 	}
 }
