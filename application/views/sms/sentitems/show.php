@@ -7,15 +7,15 @@
 <?php } ?>
 
 <div id="popup" style="display:none;">
-  <div id="popup_title">Hypertension Online Treatment</div><div id="popup_content">{popup}</div>
+  <div id="popup_title">eSMS Gateway</div><div id="popup_content">{popup}</div>
 </div>
 
 <div id="popup1" style="display:none;">
-  <div id="popup_title1">Hypertension Online Treatment</div><div id="popup_content1">{popup}</div>
+  <div id="popup_title1">eSMS Gateway</div><div id="popup_content1">{popup}</div>
 </div>
 
 <div id="popup_del" style="display:none;">
-  <div id="popup_title_del">Hypertension Online Treatment</div><div id="popup_content_del">{popup}</div>
+  <div id="popup_title_del">eSMS Gateway</div><div id="popup_content_del">{popup}</div>
 </div>
 
 <section class="content">
@@ -63,6 +63,7 @@
 	function close_popup_del(){
         $("#jqxgrid").jqxGrid('clearselection');
         $("#popup").jqxWindow('close');
+				$("#popup1").jqxWindow('close');
         $("#popup_del").jqxWindow('close');
     }
 
