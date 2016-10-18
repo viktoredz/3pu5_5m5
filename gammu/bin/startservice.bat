@@ -1,0 +1,1 @@
+START gammu-smsd -s -c smsdrc -n MampangSMSD

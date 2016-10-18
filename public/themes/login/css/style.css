@@ -1,0 +1,155 @@
+body{
+	margin:0px;
+	background:url('../img/bg-login.png')repeat-y;
+	background-size:100% 100%;
+	width:100%;
+	height:100%;
+}
+
+@font-face{
+	font-family: Verdana;
+    src: url('../fonts/verdana.ttf');
+}
+
+@font-face{
+	font-family: Calibri;
+    src: url('../fonts/calibri.ttf');
+}
+
+.btn-green{	
+	height:27px;
+	border:none;
+	-moz-border-radius:5px;
+	border-radius:5px;
+	font-family:Arial;
+	font-size:13pt;
+	font-style:italic;	
+	color:#fff;
+	text-shadow:1px 1px 1px #4f4e4e;
+	padding:0px 10px 0px 10px;
+	text-transform:uppercase;
+	margin-right:50px;
+	background:none;
+}
+
+
+/*  LOGIN PAGE */
+.login-bg{
+	padding-top: 80px;
+	background:url('images/login-bg.png')repeat;
+	width:100%;
+	height:100%;
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+.login-table{
+	background:#f2f1f1;
+	-webkit-border-radius:15px;
+	border-radius:15px;
+	box-shadow:0px 0px 12px #919191;
+}
+
+.head-login-table{		
+	height:80px;
+}
+
+.body-login-table table{
+	background:url('../img/bg-box.png')repeat-x;
+	height:214px;
+	width:360px;
+	background-size:100% 100%;
+	box-shadow:0px 0px 50px #012140;
+}
+
+.username-bg{	
+	height:35px;
+	padding-left:30px;
+	font-family:Arial;
+	font-size:13pt;
+	font-style:italic;
+	text-shadow:1px 1px 1px #000;
+	color:#ffffff;
+}
+
+.textfield-bg input{
+	height:35px;
+	width:85%;
+	border:none;
+	font-family:Arial;
+	font-size:14px;
+	border:1px solid #397103;
+	padding-right:10px;
+	
+}
+
+.textfield-bg input:focus{
+	border:1px solid #e18f12;
+}
+
+.paging{
+	font-family:Arial;
+	font-size:12px;
+}
+
+.cursor {  cursor: hand}
+
+form {
+	margin : 0px;
+}
+
+.ac_input {
+	border: 1px solid #707070;
+}
+.ac_results {
+	font-family : Verdana, Tahoma, Sans;
+	font-size: 11px;
+	padding: 1px;
+	border: 1px solid #707070;
+	background: #FFFCCF;
+	color:#333333;
+	overflow: hidden;
+	z-index:200;
+}
+
+.ac_results ul {
+	width: 100%;
+	list-style-position: outside;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.ac_results iframe {
+	display:none;/*sorry for IE5*/
+	display/**/:block;/*sorry for IE5*/
+	position:absolute;
+	top:0;
+	left:2px;
+	z-index:-1;
+	filter:mask();
+}
+
+.ac_results li {
+	margin: 0px;
+	padding: 2px 5px;
+	cursor: pointer;
+	display: block;
+	width: 100%;
+	overflow: hidden;
+}
+
+.ac_results li u{
+	color:red;
+}
+
+.ac_loading {
+	background : url('indicator.gif') right center no-repeat;
+}
+.ac_over {
+	background:#DDDDDD;
+	color: #000000;
+}

@@ -1,0 +1,1 @@
+gammu-smsd -S -c smsdrc -u -s

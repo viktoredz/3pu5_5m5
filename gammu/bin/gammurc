@@ -1,0 +1,3 @@
+[gammu]
+device = com3
+connection = at115200
