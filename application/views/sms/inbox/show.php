@@ -7,10 +7,10 @@
 <?php } ?>
 
 <div id="popup1" style="display:none;">
-  <div id="popup_title1">Hypertension Online Treatment</div><div id="popup_content1">{popup}</div>
+  <div id="popup_title1">eSMS Gateway</div><div id="popup_content1">{popup}</div>
 </div>
 <div id="popup_del" style="display:none;">
-  <div id="popup_title_del">Hypertension Online Treatment</div><div id="popup_content_del">{popup}</div>
+  <div id="popup_title_del">eSMS Gateway</div><div id="popup_content_del">{popup}</div>
 </div>
 
   <div class="row">
