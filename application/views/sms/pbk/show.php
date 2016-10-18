@@ -1,11 +1,11 @@
 <div id="popup" style="display:none;">
-  <div id="popup_title">Hypertension Online Treatment</div><div id="popup_content">{popup}</div>
+  <div id="popup_title">eSMS Gateway</div><div id="popup_content">{popup}</div>
 </div>
 <div id="popup1" style="display:none;">
-  <div id="popup_title1">Hypertension Online Treatment</div><div id="popup_content1">{popup}</div>
+  <div id="popup_title1">eSMS Gateway</div><div id="popup_content1">{popup}</div>
 </div>
 <div id="popup_del" style="display:none;">
-  <div id="popup_title_del">Hypertension Online Treatment</div><div id="popup_content_del">{popup}</div>
+  <div id="popup_title_del">eSMS Gateway</div><div id="popup_content_del">{popup}</div>
 </div>
 <section class="content">
 <form>
@@ -44,7 +44,7 @@
 </section>
 
 <script type="text/javascript">
-	$(function () {	
+	$(function () {
 		$("#menu_esms").addClass("active");
 		$("#menu_sms_pbk").addClass("active");
 
@@ -63,7 +63,7 @@
 				var condition	= fltr.filter.getfilters()[0].condition;
 				var filteroperation	= fltr.filter.getfilters()[0].operation;
 				var filterdatafield	= fltr.filtercolumn;
-				
+
 				post = post+'&filtervalue'+i+'='+value;
 				post = post+'&filtercondition'+i+'='+condition;
 				post = post+'&filteroperation'+i+'='+filteroperation;
@@ -71,7 +71,7 @@
 				post = post+'&'+filterdatafield+'operator=and';
 			}
 			post = post+'&filterscount='+i;
-			
+
 			var sortdatafield = $("#jqxgrid_pbk").jqxGrid('getsortcolumn');
 			if(sortdatafield != "" && sortdatafield != null){
 				post = post + '&sortdatafield='+sortdatafield;
@@ -80,7 +80,7 @@
 				var sortorder = $("#jqxgrid_pbk").jqxGrid('getsortinformation').sortdirection.ascending ? "asc" : ($("#jqxgrid_pbk").jqxGrid('getsortinformation').sortdirection.descending ? "desc" : "");
 				post = post+'&sortorder='+sortorder;
 			}
-			
+
 			$.post("<?php echo base_url()?>sms/pbk/export",post  ,function(response){
 				window.location.href=response;
 			});
@@ -119,31 +119,31 @@
 		},
 		root: 'Rows',
         pagesize: 10,
-        beforeprocessing: function(data){		
+        beforeprocessing: function(data){
 			if (data != null){
-				source.totalrecords = data[0].TotalRows;					
+				source.totalrecords = data[0].TotalRows;
 			}
 		}
-		};		
+		};
 		var dataadapter = new $.jqx.dataAdapter(source, {
 			loadError: function(xhr, status, error){
 				alert(error);
 			}
 		});
-     
+
 		$('#btn-refresh').click(function () {
 			$("#jqxgrid_pbk").jqxGrid('clearfilters');
 		});
 
 		$("#jqxgrid_pbk").jqxGrid(
-		{		
+		{
 			width: '100%', autoheight: true,autorowheight: true,
 			selectionmode: 'singlerow',
 			source: dataadapter, theme: theme,columnsresize: true,showtoolbar: false, pagesizeoptions: ['10', '25', '50', '100'],
 			showfilterrow: true, filterable: true, sortable: true, autoheight: true, pageable: true, virtualmode: true, editable: false,
 			rendergridrows: function(obj)
 			{
-				return obj.data;    
+				return obj.data;
 			},
 			columns: [
 				{ text: 'Nomor', datafield: 'nomor', columntype: 'textbox', filtertype: 'textbox', width: '25%' },
@@ -187,7 +187,7 @@
             height: 150,
             isModal: true, autoOpen: false, modalOpacity: 0.2
           });
-        
+
 			$("#popup_del").jqxWindow('open');
 			$("#popup").jqxWindow('close');
 			$("#popup1").jqxWindow('close');
