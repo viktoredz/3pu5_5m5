@@ -138,4 +138,10 @@
 		}
 	}
 
+	function close_popup(){
+		$("#jqxgrid").jqxGrid('clearselection');
+		$("#popup").jqxWindow('close');
+		$("#popup1").jqxWindow('close');
+	}
+
 </script>
