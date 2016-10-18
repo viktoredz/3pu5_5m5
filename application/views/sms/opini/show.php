@@ -4,6 +4,10 @@
 <div id="popup1" style="display:none;">
   <div id="popup_title1">eSMS Gateway</div><div id="popup_content1">{popup}</div>
 </div>
+<div id="popup_del" style="display:none;">
+  <div id="popup_title_del">eSMS Gateway</div><div id="popup_content_del">{popup}</div>
+</div>
+
 <?php if($this->session->flashdata('alert')!=""){ ?>
 <div class="alert alert-success alert-dismissable">
 	<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
@@ -82,11 +86,11 @@
 			});
 		});
 
-
-	function close_popup(){
+  function close_popup(){
 		$("#jqxgrid").jqxGrid('clearselection');
 		$("#popup").jqxWindow('close');
 		$("#popup1").jqxWindow('close');
+    $("#popup_del").jqxWindow('close');
 	}
 
 	function move(id){
@@ -215,12 +219,41 @@
 			$("#popup_content").html("<div style='padding:5px' align='center'><br>"+rowData.nomor+
 			"</br><br><div style='text-align:center'><input class='btn btn-primary' style='width:100px' type='button' value='Reply' onClick='reply(\""+
 			rowData.id_opini+"\")'>&nbsp;&nbsp;<input class='btn btn-success' style='width:100px' type='button' value='Detail' onClick='detail(\""+
-			rowData.id_opini+"\")'><br><br><input class='btn btn-danger' style='width:100px' type='button' value='Delete' onClick='del(\""+
+			rowData.id_opini+"\")'><br><br><input class='btn btn-danger' style='width:100px' type='button' value='Delete' onClick='btn_del(\""+
 			rowData.id_opini+"\")'>&nbsp;&nbsp;<input class='btn btn-warning' style='width:100px' type='button' value='Close' onClick='close_popup();'></div></div>");
 
 			$("html, body").animate({ scrollTop: 0 }, "slow");
 			$("#popup").jqxWindow('open');
 	});
+
+  function btn_del(id){
+		$("#popup").hide();
+		$("#popup_content_del").html("<div style='padding:5px'><br><div style='text-align:center'>Hapus Data?<br><br><input class='btn btn-danger' style='width:100px' type='button' value='Delete' onClick='del_senditm("+id+")'>&nbsp;&nbsp;<input class='btn btn-success' style='width:100px' type='button' value='Batal' onClick='close_popup()'></div></div>");
+    $("#popup_del").jqxWindow({
+      theme: theme, resizable: false,
+      width: 250,
+      height: 150,
+      isModal: true, autoOpen: false, modalOpacity: 0.2
+    });
+    $("#popup_del").jqxWindow('open');
+	}
+
+  function del_senditm(id){
+		$.post("<?php echo base_url().'sms/opini/dodel' ?>/" +id,  function(){
+		  $("#popup_content_del").html("<div style='padding:5px'><br><div style='text-align:center'>Data berhasil dihapus<br><br><input class='btn btn-success' style='width:100px' type='button' value='OK' onClick='close_popup()'></div></div>");
+          $("#popup_del").jqxWindow({
+            theme: theme, resizable: false,
+            width: 250,
+            height: 150,
+            isModal: true, autoOpen: false, modalOpacity: 0.2
+          });
+
+			$("#popup_del").jqxWindow('open');
+			$("#popup").jqxWindow('close');
+			$("#popup1").jqxWindow('close');
+			$("#jqxgrid").jqxGrid('updatebounddata', 'cells');
+		});
+	}
 
 
 </script>
