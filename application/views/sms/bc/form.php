@@ -16,8 +16,6 @@
 </div>
 <?php } ?>
 
-
-<section class="content">
 <form action="<?php echo base_url()?>sms/bc/{action}/{id}" method="POST" name="">
   <div class="row">
     <!-- left column -->
@@ -204,7 +202,6 @@
     </div><!-- /.box -->
   </div><!-- /.box -->
 </form>
-</section>
 
 <script>
 	$(function () {	
@@ -274,15 +271,16 @@
 
 
 <?php if($action=="edit"){?>
-     var source = {
+    var source = {
       datatype: "json",
       type  : "POST",
       datafields: [
       { name: 'id', type: 'string'},
+      { name: 'no_hp', type: 'string'},
       { name: 'nomor', type: 'string'},
       { name: 'nama', type: 'string'},
       { name: 'grup', type: 'string'}
-        ],
+      ],
     url: "<?php echo site_url('sms/bc/json_penerima/'.$id); ?>",
     cache: false,
     updaterow: function (rowid, rowdata, commit) {
@@ -295,12 +293,12 @@
     },
     root: 'Rows',
         pagesize: 10,
-        beforeprocessing: function(data){   
+        beforeprocessing: function(data){
       if (data != null){
-        source.totalrecords = data[0].TotalRows;          
+        source.totalrecords = data[0].TotalRows;
       }
     }
-    };    
+    };
     var dataadapter = new $.jqx.dataAdapter(source, {
       loadError: function(xhr, status, error){
         alert(error);
@@ -316,16 +314,16 @@
       width: '100%',
       selectionmode: 'singlerow',
       source: dataadapter, theme: theme,columnsresize: true,showtoolbar: false, pagesizeoptions: ['10', '25'],
-      showfilterrow: false, filterable: false, sortable: true, autoheight: true, pageable: true, virtualmode: true, editable: false,
+      showfilterrow: true, filterable: true, sortable: true, autoheight: true, pageable: true, virtualmode: true, editable: false,
       selectionmode: 'checkbox',
       rendergridrows: function(obj)
       {
         return obj.data;    
       },
       columns: [
-        { text: 'Nomor', datafield:'nomor', columntype: 'textbox', filtertype: 'textbox', width: '40%' },
-        { text: 'Nama', datafield:'nama', columntype: 'textbox', filtertype: 'textbox', width: '27%' },
-        { text: 'Grup', datafield:'grup', columntype: 'textbox', filtertype: 'textbox', width: '27%' }
+        { text: 'Nomor', datafield:'nomor', columntype: 'textbox', filtertype: 'textbox', width: '34%' },
+        { text: 'Nama', datafield:'nama', columntype: 'textbox', filtertype: 'textbox', width: '40%' },
+        { text: 'Grup', datafield:'grup', columntype: 'textbox', filtertype: 'textbox', width: '20%' }
       ]
     });
 
@@ -335,11 +333,11 @@
 
       if(row.length== undefined){
         var datarow = $("#jqxgrid_penerima").jqxGrid('getrowdata', row);
-        unselected(datarow.id);
+        if(datarow != undefined) unselected(datarow.id,datarow.no_hp);
       }else{
         $.each( row, function( rows ) {
         var datarow = $("#jqxgrid_penerima").jqxGrid('getrowdata', rows);
-          unselected(datarow.id);
+          if(datarow != undefined) unselected(datarow.id,datarow.no_hp);
         });        
       }
 
@@ -348,16 +346,13 @@
       $("#jqxgrid_penerima").jqxGrid('clearselection');
     });
 
-
-
-
-
-
-     var source = {
+    
+    var source_pbk = {
       datatype: "json",
       type  : "POST",
       datafields: [
       { name: 'id', type: 'string'},
+      { name: 'no_hp', type: 'string'},
       { name: 'nomor', type: 'string'},
       { name: 'nama', type: 'string'},
         ],
@@ -375,11 +370,11 @@
         pagesize: 10,
         beforeprocessing: function(data){   
       if (data != null){
-        source.totalrecords = data[0].TotalRows;          
+        source_pbk.totalrecords = data[0].TotalRows;          
       }
     }
     };    
-    var dataadapter = new $.jqx.dataAdapter(source, {
+    var dataadapter = new $.jqx.dataAdapter(source_pbk, {
       loadError: function(xhr, status, error){
         alert(error);
       }
@@ -413,11 +408,11 @@
 
       if(row.length== undefined){
         var datarow = $("#jqxgrid_pilih").jqxGrid('getrowdata', row);
-        selected(datarow.id);
+        if(datarow != undefined) selected(datarow.id,datarow.no_hp);
       }else{
         $.each( row, function( rows ) {
         var datarow = $("#jqxgrid_pilih").jqxGrid('getrowdata', rows);
-          selected(datarow.id);
+          if(datarow != undefined) selected(datarow.id,datarow.no_hp);
         });        
       }
 
@@ -426,13 +421,13 @@
       $("#jqxgrid_pilih").jqxGrid('clearselection');
     });
 
-    function unselected(number){
-      $.post("<?php echo base_url().'sms/bc/remove_number/'.$id ?>/"+number,  function(){
+    function unselected(cl_pid,no_hp){
+      $.post("<?php echo base_url().'sms/bc/remove_number/'.$id ?>/"+cl_pid,  function(){
       });
     }
 
-    function selected(number){
-      $.post("<?php echo base_url().'sms/bc/add_number/'.$id ?>/"+number,  function(){
+    function selected(cl_pid,no_hp){
+      $.post("<?php echo base_url().'sms/bc/add_number/'.$id ?>/"+cl_pid+'/'+no_hp,  function(){
       });
     }
 <?php }?>

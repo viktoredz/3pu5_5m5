@@ -44,8 +44,12 @@ class Smsdaemon extends CI_Controller {
 	
 	function sms_send($nomor = "", $pesan=""){
 		$data = array();
-		$data['DestinationNumber'] = $nomor;
-		$data['TextDecoded'] = $pesan;
+		$time = date("Y-m-d H:i:s");
+		$data['InsertIntoDB'] 		= $time;
+		$data['SendingDateTime'] 	= $time;
+		$data['SendingTimeOut'] 	= $time;
+		$data['DestinationNumber'] 	= $nomor;
+		$data['TextDecoded'] 		= $pesan;
 
 		$this->db->insert('outbox',$data);
 	}
@@ -157,8 +161,7 @@ class Smsdaemon extends CI_Controller {
 	function sms_opini($args = ""){
 		echo "sms.opini ...\n";
 
-		$operator = "'*123#','*111#','V-Tri','+3'";
-		//$operator = "'*123#'";
+		$operator = "'*123#','*111#','V-Tri','+3','3'";
 
 		//jika sms blm di proses, bukan operator, kata pertama opini, 
 		$this->db->select('ID, SUBSTRING_INDEX(`TextDecoded`," ",1) as `Kategori`,`SenderNumber`,`TextDecoded`,`sms_tipe`.`id_tipe`',false);
@@ -166,6 +169,31 @@ class Smsdaemon extends CI_Controller {
 		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
 		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) IN (SELECT `nama` FROM `sms_tipe` WHERE jenis="terima")');
 		$this->db->join('sms_tipe','sms_tipe.nama=SUBSTRING_INDEX(`TextDecoded`," ", 1)','inner');
+		$inbox = $this->db->get("inbox")->result();
+		foreach ($inbox as $rows) {
+			$num_kategori = strlen($rows->Kategori)+1;
+
+			$opini = array();
+			$opini['id_sms_tipe'] = $rows->id_tipe;
+			$opini['pesan'] = substr($rows->TextDecoded,$num_kategori);
+			$opini['nomor'] = $rows->SenderNumber;
+			if($this->db->insert("sms_opini",$opini)){
+				$this->db->where('ID',$rows->ID);
+				$this->db->delete('inbox');
+			}
+		}
+	}
+	
+	function sms_daftar($args = ""){
+		echo "sms.daftar ...\n";
+
+		$operator = "'*123#','*111#','V-Tri','+3','3'";
+
+		//jika sms blm di proses, bukan operator, REG/BPJS daftar 
+		$this->db->select('ID, SUBSTRING_INDEX(`TextDecoded`," ",1) as `Kategori`,`SenderNumber`,`TextDecoded`,`sms_tipe`.`id_tipe`',false);
+		$this->db->where("Processed","false");
+		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
+		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) IN ("REG","BPJS")');
 		$inbox = $this->db->get("inbox")->result();
 		foreach ($inbox as $rows) {
 			$num_kategori = strlen($rows->Kategori)+1;

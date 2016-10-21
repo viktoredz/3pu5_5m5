@@ -13,6 +13,7 @@ class Pbk_model extends CI_Model {
     {
 	    $this->db->select("sms_pbk.*,sms_grup.nama AS nama_grup");
 	    $this->db->join('sms_grup', 'sms_grup.id_grup = sms_pbk.id_sms_grup', 'left'); 
+	    $this->db->order_by("nama","asc");
 	    $query = $this->db->get($this->tabel,$limit,$start);
     	return $query->result();
 	
@@ -20,7 +21,7 @@ class Pbk_model extends CI_Model {
 
  	function get_data_row($id){
 		$data = array();
-		$this->db->where("nomor",$id);
+		$this->db->where("cl_pid",$id);
 		$query = $this->db->get($this->tabel)->row_array();
 
 		if(!empty($query)){
@@ -45,8 +46,11 @@ class Pbk_model extends CI_Model {
 
     function insert_entry()
     {
+		$data['cl_pid']			= $this->input->post('cl_pid');
 		$data['nomor']			= $this->input->post('nomor');
+		$data['bpjs']			= $this->input->post('bpjs');
 		$data['nama']			= $this->input->post('nama');
+		$data['alamat']			= $this->input->post('alamat');
 		$data['id_sms_grup']	= $this->input->post('id_sms_grup');
 
 		if($this->getSelectedData($this->tabel, $data['nomor'])->num_rows() > 0) {
@@ -60,13 +64,16 @@ class Pbk_model extends CI_Model {
 		}
     }
 
-    function update_entry($nomor)
+    function update_entry($cl_pid)
     {
+		$data['nomor']			= $this->input->post('nomor');
+		$data['bpjs']			= $this->input->post('bpjs');
 		$data['nama']			= $this->input->post('nama');
+		$data['alamat']			= $this->input->post('alamat');
 		$data['id_sms_grup']	= $this->input->post('id_sms_grup');
 		$data['modified_on']	= date("Y-m-d H:i:s");
 
-		$this->db->where('nomor',$nomor);
+		$this->db->where('cl_pid',$cl_pid);
 		if($this->db->update($this->tabel, $data)){
 			return true;
 		}else{
@@ -74,9 +81,9 @@ class Pbk_model extends CI_Model {
 		}
     }
 
-	function delete_entry($nomor)
+	function delete_entry($cl_pid)
 	{
-		$this->db->where('nomor',$nomor);
+		$this->db->where('cl_pid',$cl_pid);
 
 		return $this->db->delete($this->tabel);
 	}

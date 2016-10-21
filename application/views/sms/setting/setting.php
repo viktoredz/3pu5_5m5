@@ -6,8 +6,6 @@
 	<?php echo $this->session->flashdata('alert_form')?>
 </div>
 <?php } ?>
-
-<section class="content">
 <form action="<?php echo base_url()?>sms/setting/doupdate" method="POST" name="frmUsers">
   <div class="row">
     <!-- left column -->
@@ -76,8 +74,6 @@
   <div id="popup_title">SMS Gateway Result</div>
   <div id="popup_content" style="float:center;text-align:center;padding:20px;">&nbsp;</div>
 </div>
-</section>
-
 <script>
 	$(function () {	
 		$("#menu_admin_panel").addClass("active");

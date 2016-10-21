@@ -24,15 +24,17 @@ class Bc_model extends CI_Model {
     {
 		$this->db->select("sms_pbk.*,sms_grup.nama as grup");
 		$this->db->where("id_sms_bc",$id);
-		$this->db->join("sms_pbk","sms_pbk.nomor=sms_bc_tujuan.nomor");
-		$this->db->join("sms_grup","sms_grup.id_grup=sms_pbk.id_sms_grup");
+		$this->db->join("sms_pbk","sms_pbk.cl_pid=sms_bc_tujuan.cl_pid");
+		$this->db->join("sms_grup","sms_grup.id_grup=sms_pbk.id_sms_grup","left");
 	    $query = $this->db->get("sms_bc_tujuan",$limit,$start);
     	return $query->result();
     }
 
     function get_pbk($id,$start=0,$limit=999999,$options=array())
     {
-		$this->db->where("nomor NOT IN (SELECT nomor FROM sms_bc_tujuan WHERE id_sms_bc=".$id.")");
+		$this->db->where("cl_pid NOT IN (SELECT cl_pid FROM sms_bc_tujuan WHERE id_sms_bc=".$id.")");
+		$this->db->where("nomor <>",'');
+		$this->db->where("nomor <>",'-');
 	    $query = $this->db->get("sms_pbk",$limit,$start);
     	return $query->result();
     }
@@ -76,15 +78,16 @@ class Bc_model extends CI_Model {
         return $this->db->get_where($tabel, array('nomor'=>$data));
     }
 
-   function remove_number($id, $nomor){
+   function remove_number($id, $cl_pid){
 		$data['id_sms_bc']	= $id;
-		$data['nomor']		= $nomor;
+		$data['cl_pid']		= $cl_pid;
 		$this->db->delete('sms_bc_tujuan', $data);
    }
 
-   function add_number($id, $nomor){
+   function add_number($id, $cl_pid, $nomor){
 		$data['id_sms_bc']		= $id;
 		$data['nomor']		= $nomor;
+		$data['cl_pid']		= $cl_pid;
 		$this->db->insert('sms_bc_tujuan', $data);
    }
 

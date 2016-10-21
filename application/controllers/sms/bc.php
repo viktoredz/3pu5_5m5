@@ -183,7 +183,8 @@ class Bc extends CI_Controller {
 		$no=1;
 		foreach($rows as $act) {
 			$data[] = array(
-				'id'		=> $act->nomor,
+				'id'		=> $act->cl_pid,
+				'no_hp'		=> str_replace("'", "", str_replace("-", "", $act->nomor)),
 				'nomor'		=> '+62 - '.$act->nomor,
 				'nama' 		=> $act->nama,
 				'grup' 		=> $act->grup
@@ -246,7 +247,8 @@ class Bc extends CI_Controller {
 		$no=1;
 		foreach($rows as $act) {
 			$data[] = array(
-				'id'		=> $act->nomor,
+				'id'		=> $act->cl_pid,
+				'no_hp'		=> str_replace("'", "", str_replace("-", "", $act->nomor)),
 				'nomor'		=> '+62 - '.$act->nomor,
 				'nama' 		=> $act->nama
 			);
@@ -335,12 +337,12 @@ class Bc extends CI_Controller {
 		$this->template->show($data,"home");
 	}
 
-	function remove_number($id, $nomor){
-		$this->bc_model->remove_number($id, $nomor);
+	function remove_number($id, $cl_pid){
+		$this->bc_model->remove_number($id, $cl_pid);
 	}
 
-	function add_number($id, $nomor){
-		$this->bc_model->add_number($id, $nomor);
+	function add_number($id, $cl_pid, $nomor){
+		$this->bc_model->add_number($id, $cl_pid, $nomor);
 	}
 
 	function dodel($id=""){

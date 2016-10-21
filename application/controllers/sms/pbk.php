@@ -96,9 +96,10 @@ class Pbk extends CI_Controller {
 		foreach($rows as $act) {
 			$data[] = array(
 				'no'		=> $no++,
-				'id'		=> $act->nomor,
+				'id'		=> $act->cl_pid,
 				'nomor'		=> '+62 - '.$act->nomor,
 				'nama' 		=> $act->nama,
+				'alamat'	=> $act->alamat,
 				'nama_grup'	=> $act->nama_grup,
 				'created_on'=> $act->created_on,
 				'edit'		=> 1,
@@ -128,6 +129,7 @@ class Pbk extends CI_Controller {
 	function add(){
 		$this->authentication->verify('sms','add');
 
+        $this->form_validation->set_rules('cl_pid', 'No RM', 'trim|required');
         $this->form_validation->set_rules('nomor', 'Nomor', 'trim|required|callback_cekNomor');
         $this->form_validation->set_rules('nama', 'Nama', 'trim|required');
         $this->form_validation->set_rules('id_sms_grup', 'Grup', 'trim|required');
@@ -152,29 +154,32 @@ class Pbk extends CI_Controller {
 		$this->template->show($data,"home");
 	}
 
-	function edit($nomor=""){
+	function edit($cl_pid=""){
 		$this->authentication->verify('sms','edit');
 
+        $this->form_validation->set_rules('cl_pid', 'No RM', 'trim|required');
         $this->form_validation->set_rules('nama', 'Nama', 'trim|required');
         $this->form_validation->set_rules('id_sms_grup', 'Grup', 'trim|required');
+        $this->form_validation->set_rules('bpjs', 'BPJS', 'trim');
+        $this->form_validation->set_rules('nomor', 'Nomor', 'trim');
 
 		if($this->form_validation->run()== FALSE){
-			$data 	= $this->pbk_model->get_data_row($nomor); 
+			$data 	= $this->pbk_model->get_data_row($cl_pid); 
 
 			$data['title_group'] 	= "Buku Telepon";
 			$data['title_form']		= "Ubah Nomor Telepon";
 			$data['action']			= "edit";
-			$data['nomor']			= $nomor;
+			$data['cl_pid']			= $cl_pid;
 
 			$data['grupoption'] 	= $this->pbk_model->get_grupoption();
 
 			$data['content'] 	= $this->parser->parse("sms/pbk/form",$data,true);
-		}elseif($this->pbk_model->update_entry($nomor)){
+		}elseif($this->pbk_model->update_entry($cl_pid)){
 			$this->session->set_flashdata('alert_form', 'Save data successful...');
-			redirect(base_url()."sms/pbk/edit/".$nomor);
+			redirect(base_url()."sms/pbk/edit/".$cl_pid);
 		}else{
 			$this->session->set_flashdata('alert_form', 'Save data failed...');
-			redirect(base_url()."sms/pbk/edit/".$nomor);
+			redirect(base_url()."sms/pbk/edit/".$cl_pid);
 		}
 
 		$this->template->show($data,"home");

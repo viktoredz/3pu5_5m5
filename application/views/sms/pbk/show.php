@@ -7,7 +7,6 @@
 <div id="popup_del" style="display:none;">
   <div id="popup_title_del">eSMS Gateway</div><div id="popup_content_del">{popup}</div>
 </div>
-<section class="content">
 <form>
   <div class="row">
     <!-- left column -->
@@ -41,8 +40,6 @@
 	</div>
   </div>
 </form>
-</section>
-
 <script type="text/javascript">
 	$(function () {
 		$("#menu_esms").addClass("active");
@@ -105,6 +102,7 @@
 			{ name: 'id', type: 'string'},
 			{ name: 'nomor', type: 'string'},
 			{ name: 'nama_grup', type: 'string'},
+			{ name: 'alamat', type: 'string'},
 			{ name: 'nama', type: 'string'},
         ],
 		url: "<?php echo site_url('sms/pbk/json'); ?>",
@@ -147,8 +145,9 @@
 			},
 			columns: [
 				{ text: 'Nomor', datafield: 'nomor', columntype: 'textbox', filtertype: 'textbox', width: '25%' },
-				{ text: 'Nama', datafield: 'nama', columntype: 'textbox', filtertype: 'textbox', width: '45%' },
-				{ text: 'Group', datafield: 'nama_grup', columntype: 'textbox', filtertype: 'textbox', width: '30%' }
+				{ text: 'Nama', datafield: 'nama', columntype: 'textbox', filtertype: 'textbox', width: '25%' },
+				{ text: 'Alamat', datafield: 'alamat', columntype: 'textbox', filtertype: 'textbox', width: '30%' },
+				{ text: 'Group', datafield: 'nama_grup', columntype: 'textbox', filtertype: 'textbox', width: '20%' }
 
             ]
 		});

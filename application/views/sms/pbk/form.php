@@ -13,10 +13,7 @@
   <?php echo $this->session->flashdata('alert_form')?>
 </div>
 <?php } ?>
-
-
-<section class="content">
-<form action="<?php echo base_url()?>sms/pbk/{action}/{nomor}" method="POST" name="">
+<form action="<?php echo base_url()?>sms/pbk/{action}/{cl_pid}" method="POST" name="">
   <div class="row">
     <!-- left column -->
     <div class="col-md-6">
@@ -32,8 +29,28 @@
           </div>
           <div class="box-body">
             <div class="form-group">
+              <label>No RM</label>
+              <input type="text" class="form-control" name="cl_pid" placeholder="No RM" <?php if($action=="edit") echo "readonly"; ?> value="<?php 
+                if(set_value('cl_pid')=="" && isset($cl_pid)){
+                  echo $cl_pid;
+                }else{
+                  echo  set_value('cl_pid');
+                }
+                ?>">
+            </div>
+            <div class="form-group">
+              <label>No BPJS</label>
+              <input type="text" class="form-control" name="bpjs" placeholder="No BPJS" value="<?php 
+                if(set_value('bpjs')=="" && isset($bpjs)){
+                  echo $bpjs;
+                }else{
+                  echo  set_value('bpjs');
+                }
+                ?>">
+            </div>
+            <div class="form-group">
               <label>Nomor (+62)</label>
-              <input type="text" class="form-control" name="nomor" placeholder="+62" <?php if($action=="edit") echo "readonly"; ?> value="<?php 
+              <input type="text" class="form-control" name="nomor" placeholder="+62" value="<?php 
                 if(set_value('nomor')=="" && isset($nomor)){
                   echo $nomor;
                 }else{
@@ -48,6 +65,16 @@
                   echo $nama;
                 }else{
                   echo  set_value('nama');
+                }
+                ?>">
+            </div>
+            <div class="form-group">
+              <label>Alamat</label>
+              <input type="text" class="form-control" name="alamat" placeholder="Alamat" value="<?php 
+                if(set_value('alamat')=="" && isset($alamat)){
+                  echo $alamat;
+                }else{
+                  echo  set_value('alamat');
                 }
                 ?>">
             </div>
@@ -75,8 +102,6 @@
   	</div><!-- /.box -->
   </div><!-- /.box -->
 </form>
-</section>
-
 <script>
 	$(function () {	
     $("#menu_esms").addClass("active");
