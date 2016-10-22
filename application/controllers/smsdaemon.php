@@ -9,6 +9,7 @@ class Smsdaemon extends CI_Controller {
 		$this->load->model('sms/bc_model');
 		$this->load->model('sms/pbk_model');
 		$this->load->model('sms/setting_model');
+		$this->load->model('epus');
 	}
 	
 	function index($args = ""){
@@ -32,6 +33,9 @@ class Smsdaemon extends CI_Controller {
 				$this->sms_opini($args);
 
 				$this->sms_broadcast($args);
+				
+				$this->sms_daftar($args);
+
 
 				$x++;
 				sleep(5);
@@ -51,7 +55,7 @@ class Smsdaemon extends CI_Controller {
 		$data['DestinationNumber'] 	= $nomor;
 		$data['TextDecoded'] 		= $pesan;
 
-		$this->db->insert('outbox',$data);
+		return $this->db->insert('outbox',$data);
 	}
 	
 	function sms_wrong($nomor = "", $pesan="" , $menu=""){
@@ -190,24 +194,93 @@ class Smsdaemon extends CI_Controller {
 		$operator = "'*123#','*111#','V-Tri','+3','3'";
 
 		//jika sms blm di proses, bukan operator, REG/BPJS daftar 
-		$this->db->select('ID, SUBSTRING_INDEX(`TextDecoded`," ",1) as `Kategori`,`SenderNumber`,`TextDecoded`,`sms_tipe`.`id_tipe`',false);
+		$this->db->select('ID, SUBSTRING_INDEX(`TextDecoded`," ",1) as `keyword`,`SenderNumber`,`TextDecoded`',false);
 		$this->db->where("Processed","false");
 		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
 		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) IN ("REG","BPJS")');
-		$inbox = $this->db->get("inbox")->result();
+		$inbox = $this->db->get("inbox")->result_array();
 		foreach ($inbox as $rows) {
-			$num_kategori = strlen($rows->Kategori)+1;
-
-			$opini = array();
-			$opini['id_sms_tipe'] = $rows->id_tipe;
-			$opini['pesan'] = substr($rows->TextDecoded,$num_kategori);
-			$opini['nomor'] = $rows->SenderNumber;
-			if($this->db->insert("sms_opini",$opini)){
-				$this->db->where('ID',$rows->ID);
-				$this->db->delete('inbox');
+			if($rows['keyword'] == "REG"){
+	            $nomor    = "#".$rows['SenderNumber'];
+	            $sender1  = str_replace("#08", "8", $nomor);
+	            $sender2  = str_replace("#628", "8", $nomor);
+	            $sender3  = str_replace("#+628", "8", $nomor);
+	            $sender4  = str_replace("#", "", $nomor);
+				$this->db->where("nomor",$sender1);
+				$this->db->or_where("nomor",$sender2);
+				$this->db->or_where("nomor",$sender3);
+				$this->db->or_where("nomor",$sender4);
+				$pbk = $this->db->get("sms_pbk")->row();
+				if(!empty($pbk->cl_pid)){
+					echo "\nUMUM ".$pbk->cl_pid.": ".$rows['TextDecoded'];
+					$reply = $this->epus_pendaftaran($pbk->cl_pid, $rows['TextDecoded'], $args);
+					if(isset($reply) && $reply['status_code']['code']=="200"){
+						$reply = isset($reply['content'][0]) ? $reply['content'][0] : "Maaf, pendaftaran tidak berhasil\nKetik: REG<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
+					}else{
+						$reply = isset($reply['content']['validation']) ? $reply['content']['validation'] : "Maaf, pendaftaran tidak berhasil\nKetik: REG<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
+					}
+				}else{
+					$reply = "Maaf, Nomor HP anda tidak terdaftar\nKetik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
+				}
+			}else{
+	            $text   = explode(" ",$rows['TextDecoded']);
+	            $bpjs 	= $text[1];
+				$this->db->where("bpjs",$bpjs);
+				$pbk = $this->db->get("sms_pbk")->row();
+				if(!empty($pbk->cl_pid)){
+					if(isset($text[3])){
+						$sms = "REG ".$text[2]." ".$text[3];
+						echo "\nBPJS ".$pbk->cl_pid.": ".$sms;
+						$reply = $this->epus_pendaftaran($pbk->cl_pid, $sms, $args);
+						if(isset($reply) && $reply['status_code']['code']=="200"){
+							$reply = isset($reply['content'][0]) ? $reply['content'][0] : "Maaf, pendaftaran tidak berhasil\nKetik: REG<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
+						}else{
+							$reply = isset($reply['content']['validation']) ? $reply['content']['validation'] : "Maaf, pendaftaran tidak berhasil\nKetik: REG<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
+						}
+					}else{
+						$reply = "Maaf, format SMS salah\nKetik: REG<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
+					}
+				}else{
+					$reply = "Maaf, Nomor BPJS tidak terdaftar\nKetik: REG<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
+				}
 			}
+
+			if($send = $this->sms_send($rows['SenderNumber'],$reply)){
+				$this->db->where('ID',$rows['ID']);
+				$this->db->update('inbox',array('Processed'=>"true"));
+			}
+			echo $reply;
 		}
 	}
+
+	function epus_pendaftaran($cl_pid="", $sms="", $puskesmas){
+		$config 	= $this->epus->get_config("daftar_kunjunganpid_epus");
+		$url 		= $config['server'];
+
+		$fields_string = array(
+        	'client_id' 		=> $config['client_id'],
+	        'kodepuskesmas' 	=> $puskesmas,
+	        'cl_pid' 			=> $cl_pid,
+	        'isi_sms' 	 		=> $sms,
+	        'petugas' 	 		=> "puskesmas",
+	        'request_output' 	=> $config['request_output'],
+	        'request_time' 		=> $config['request_time'],
+	        'request_token' 	=> $config['request_token']
+	    );
+
+		$curl = curl_init();
+
+        curl_setopt($curl,CURLOPT_URL,$url);
+        curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+        curl_setopt($curl,CURLOPT_POST,count($fields_string));
+		curl_setopt($curl,CURLOPT_POSTFIELDS, $fields_string);
+
+        $result = curl_exec($curl);
+		curl_close($curl);
+
+		$res = json_decode(($result), true);
+		return $res;
+	}	
 	
 	function sms_broadcast($args = ""){
 		echo "sms.broadcast ...\n";
