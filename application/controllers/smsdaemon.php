@@ -22,7 +22,7 @@ class Smsdaemon extends CI_Controller {
 			ini_set('implicit_flush', 'On');
 			
 			for($i=1;$i<5;$i++){
-				echo("\n".date("d-m-Y h:i:s") ." ".$x." ".$args." versi 1.0");
+				echo("\n".date("d-m-Y h:i:s") ." ".$i." ".$args." versi 1.0");
 				
 				$this->sms_reply($args);
 
