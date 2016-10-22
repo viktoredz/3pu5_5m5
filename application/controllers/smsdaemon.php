@@ -21,9 +21,7 @@ class Smsdaemon extends CI_Controller {
 			ini_set('output_buffering', 'Off');
 			ini_set('implicit_flush', 'On');
 			
-			$loop=true;
-			$x=1;
-			//while($loop){
+			for($i=1;$i<5;$i++){
 				echo("\n".date("d-m-Y h:i:s") ." ".$x." ".$args." versi 1.0");
 				
 				$this->sms_reply($args);
@@ -35,11 +33,8 @@ class Smsdaemon extends CI_Controller {
 				$this->sms_broadcast($args);
 				
 				$this->sms_daftar($args);
-
-
-				$x++;
-				//sleep(5);
-			//}	
+				sleep(5);
+			}
 		}else{
 			die("access via cli");
 		}
