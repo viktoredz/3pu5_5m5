@@ -61,10 +61,9 @@ class Setting extends CI_Controller {
 	function restart(){
 		$this->authentication->verify('sms','edit');
 
-		$stop = NULL;
+		$hasil = NULL;
 
-		exec("gammu-smsd -k",$stop);
-		exec("gammu-smsd -c smsdrc -s", $hasil);
+		exec("sudo service gammu-smsd restart",$hasil);
 
 		foreach ($hasil as $row) {
 			echo "<br>".$row;
@@ -81,11 +80,11 @@ class Setting extends CI_Controller {
 		$hasil = NULL;
 		$stop = NULL;
 	
-		exec("gammu-smsd -k",$stop);
+		exec("sudo service gammu-smsd stop",$stop);
 		
-		exec("gammu -c "."gammurc getussd ".$ussd, $hasil);
+		exec("gammu getussd ".$ussd, $hasil);
 		
-		exec("gammu-smsd -c smsdrc -s");
+		exec("sudo service gammu-smsd start");
 		
 		$i=0;
 		foreach ($hasil as $row) {
@@ -102,11 +101,11 @@ class Setting extends CI_Controller {
 		$hasil = NULL;
 		$stop = NULL;
 
-		exec("gammu-smsd -k",$stop);
+		exec("sudo service gammu-smsd stop",$stop);
 		
-		exec("gammu -c "."gammurc --identify ", $hasil);
+		exec("sudo gammu --identify", $hasil);
 
-		exec("gammu-smsd -c smsdrc -s");
+		exec("sudo service gammu-smsd start");
 
 		foreach ($hasil as $row) {
 			echo "<br>".$row;
