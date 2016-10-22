@@ -23,7 +23,7 @@ class Smsdaemon extends CI_Controller {
 			
 			$loop=true;
 			$x=1;
-			while($loop){
+			//while($loop){
 				echo("\n".date("d-m-Y h:i:s") ." ".$x." ".$args." versi 1.0");
 				
 				$this->sms_reply($args);
@@ -38,8 +38,8 @@ class Smsdaemon extends CI_Controller {
 
 
 				$x++;
-				sleep(5);
-			}	
+				//sleep(5);
+			//}	
 		}else{
 			die("access via cli");
 		}
@@ -112,6 +112,7 @@ class Smsdaemon extends CI_Controller {
 		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
 		$this->db->where("SUBSTRING_INDEX(TextDecoded,' ',1) NOT IN (SELECT `code` FROM `sms_info_menu`)");
 		$this->db->where("SUBSTRING_INDEX(TextDecoded,' ',1) NOT IN (SELECT `nama` FROM `sms_tipe` WHERE jenis='terima')");
+		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("REG","BPJS","Reg","Bpjs","reg","bpjs")');
 		$inbox = $this->db->get("inbox")->result();
 		foreach ($inbox as $rows) {
 
@@ -135,6 +136,7 @@ class Smsdaemon extends CI_Controller {
 		$this->db->where("Processed","false");
 		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
 		$this->db->where("SUBSTRING_INDEX(TextDecoded,' ',1) IN (SELECT `code` FROM `sms_info_menu`)");
+		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("REG","BPJS","Reg","Bpjs","reg","bpjs")');
 		$inbox = $this->db->get("inbox")->result();
 		foreach ($inbox as $rows) {
 			$text = explode(" ",$rows->TextDecoded);
@@ -172,6 +174,7 @@ class Smsdaemon extends CI_Controller {
 		$this->db->where("Processed","false");
 		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
 		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) IN (SELECT `nama` FROM `sms_tipe` WHERE jenis="terima")');
+		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("REG","BPJS","Reg","Bpjs","reg","bpjs")');
 		$this->db->join('sms_tipe','sms_tipe.nama=SUBSTRING_INDEX(`TextDecoded`," ", 1)','inner');
 		$inbox = $this->db->get("inbox")->result();
 		foreach ($inbox as $rows) {
@@ -197,7 +200,7 @@ class Smsdaemon extends CI_Controller {
 		$this->db->select('ID, SUBSTRING_INDEX(`TextDecoded`," ",1) as `keyword`,`SenderNumber`,`TextDecoded`',false);
 		$this->db->where("Processed","false");
 		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
-		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) IN ("REG","BPJS")');
+		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) IN ("REG","BPJS","Reg","Bpjs","reg","bpjs")');
 		$inbox = $this->db->get("inbox")->result_array();
 		foreach ($inbox as $rows) {
 			if($rows['keyword'] == "REG"){
