@@ -198,7 +198,8 @@ class Smsdaemon extends CI_Controller {
 		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) IN ("REG","BPJS","Reg","Bpjs","reg","bpjs")');
 		$inbox = $this->db->get("inbox")->result_array();
 		foreach ($inbox as $rows) {
-			if($rows['keyword'] == "REG"){
+			$keyword = strtoupper($rows['keyword']);
+			if($keyword == "REG"){
 	            $nomor    = "#".$rows['SenderNumber'];
 	            $sender1  = str_replace("#08", "8", $nomor);
 	            $sender2  = str_replace("#628", "8", $nomor);
