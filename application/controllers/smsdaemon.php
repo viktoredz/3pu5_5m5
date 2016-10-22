@@ -289,7 +289,7 @@ class Smsdaemon extends CI_Controller {
 		$this->db->where("tgl_akhir >= ", date("Y-m-d"));
 		$this->db->where("is_harian < ", date("H:i:s"));
 		$this->db->where("is_loop", "tidak");
-		$this->db->where("id_bc NOT IN (SELECT `id_bc` FROM `sms_bc_status`)");
+		$this->db->where("id_bc NOT IN (SELECT `id_bc` FROM `sms_bc_status` WHERE tgl='".date("Y-m-d")."')");
 		$sms_1x = $this->db->get("sms_bc")->result();
 		foreach ($sms_1x as $rows) {
 			$this->db->where("id_sms_bc",$rows->id_bc);
