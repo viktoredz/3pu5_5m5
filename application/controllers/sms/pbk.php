@@ -252,6 +252,8 @@ class Pbk extends CI_Controller {
 		foreach($rows as $act) {
 			$data_tabel[] = array(
 				'no'		=> $no++,
+				'cl_pid'	=> $act->cl_pid,
+				'bpjs'		=> $act->bpjs,
 				'id'		=> $act->nomor,
 				'nomor'		=> '+62 - '.$act->nomor,
 				'nama' 		=> $act->nama,
