@@ -107,7 +107,7 @@ class Smsdaemon extends CI_Controller {
 		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
 		$this->db->where("SUBSTRING_INDEX(TextDecoded,' ',1) NOT IN (SELECT `code` FROM `sms_info_menu`)");
 		$this->db->where("SUBSTRING_INDEX(TextDecoded,' ',1) NOT IN (SELECT `nama` FROM `sms_tipe` WHERE jenis='terima')");
-		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("REG","BPJS","Reg","Bpjs","reg","bpjs")');
+		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("BYR","BPJS","Byr","Bpjs","byr","bpjs")');
 		$inbox = $this->db->get("inbox")->result();
 		foreach ($inbox as $rows) {
 
@@ -131,7 +131,7 @@ class Smsdaemon extends CI_Controller {
 		$this->db->where("Processed","false");
 		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
 		$this->db->where("SUBSTRING_INDEX(TextDecoded,' ',1) IN (SELECT `code` FROM `sms_info_menu`)");
-		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("REG","BPJS","Reg","Bpjs","reg","bpjs")');
+		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("BYR","BPJS","Byr","Bpjs","byr","bpjs")');
 		$inbox = $this->db->get("inbox")->result();
 		foreach ($inbox as $rows) {
 			$text = explode(" ",$rows->TextDecoded);
@@ -169,7 +169,7 @@ class Smsdaemon extends CI_Controller {
 		$this->db->where("Processed","false");
 		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
 		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) IN (SELECT `nama` FROM `sms_tipe` WHERE jenis="terima")');
-		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("REG","BPJS","Reg","Bpjs","reg","bpjs")');
+		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("BYR","BPJS","Byr","Bpjs","byr","bpjs")');
 		$this->db->join('sms_tipe','sms_tipe.nama=SUBSTRING_INDEX(`TextDecoded`," ", 1)','inner');
 		$inbox = $this->db->get("inbox")->result();
 		foreach ($inbox as $rows) {
@@ -191,20 +191,16 @@ class Smsdaemon extends CI_Controller {
 
 		$operator = "'*123#','*111#','V-Tri','+3','3'";
 
-		//jika sms blm di proses, bukan operator, REG/BPJS daftar 
+		//jika sms blm di proses, bukan operator, BYR/BPJS daftar 
 		$this->db->select('ID, SUBSTRING_INDEX(`TextDecoded`," ",1) as `keyword`,`SenderNumber`,`TextDecoded`',false);
 		$this->db->where("Processed","false");
 		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
-		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) IN ("REG","BPJS","Reg","Bpjs","reg","bpjs")');
+		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) IN ("BYR","BPJS","Byr","Bpjs","byr","bpjs")');
 		$inbox = $this->db->get("inbox")->result_array();
 		foreach ($inbox as $rows) {
 			$keyword = strtoupper($rows['keyword']);
-			if($keyword == "REG"){
+			if($keyword == "BYR"){
 	            $nomor    = "#".$rows['SenderNumber'];
-	            $sender1  = str_replace("#08", "8", $nomor);
-	            $sender2  = str_replace("#628", "8", $nomor);
-	            $sender3  = str_replace("#+628", "8", $nomor);
-	            $sender4  = str_replace("#", "", $nomor);
 				$this->db->where("nomor",$sender1);
 				$this->db->or_where("nomor",$sender2);
 				$this->db->or_where("nomor",$sender3);
@@ -214,9 +210,9 @@ class Smsdaemon extends CI_Controller {
 					echo "\nUMUM ".$pbk->cl_pid.": ".$rows['TextDecoded'];
 					$reply = $this->epus_pendaftaran($pbk->cl_pid, $rows['TextDecoded'], $args);
 					if(isset($reply) && $reply['status_code']['code']=="200"){
-						$reply = isset($reply['content'][0]) ? $reply['content'][0] : "Maaf, pendaftaran tidak berhasil\nKetik: REG<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
+						$reply = isset($reply['content'][0]) ? $reply['content'][0] : "Maaf, pendaftaran tidak berhasil\nKetik: BYR<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
 					}else{
-						$reply = isset($reply['content']['validation']) ? $reply['content']['validation'] : "Maaf, pendaftaran tidak berhasil\nKetik: REG<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
+						$reply = isset($reply['content']['validation']) ? $reply['content']['validation'] : "Maaf, pendaftaran tidak berhasil\nKetik: BYR<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
 					}
 				}else{
 					$reply = "Maaf, Nomor HP anda tidak terdaftar\nKetik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
@@ -228,19 +224,19 @@ class Smsdaemon extends CI_Controller {
 				$pbk = $this->db->get("sms_pbk")->row();
 				if(!empty($pbk->cl_pid)){
 					if(isset($text[3])){
-						$sms = "REG ".$text[2]." ".$text[3];
+						$sms = "BYR ".$text[2]." ".$text[3];
 						echo "\nBPJS ".$pbk->cl_pid.": ".$sms;
 						$reply = $this->epus_pendaftaran($pbk->cl_pid, $sms, $args);
 						if(isset($reply) && $reply['status_code']['code']=="200"){
-							$reply = isset($reply['content'][0]) ? $reply['content'][0] : "Maaf, pendaftaran tidak berhasil\nKetik: REG<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
+							$reply = isset($reply['content'][0]) ? $reply['content'][0] : "Maaf, pendaftaran tidak berhasil\nKetik: BYR<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
 						}else{
-							$reply = isset($reply['content']['validation']) ? $reply['content']['validation'] : "Maaf, pendaftaran tidak berhasil\nKetik: REG<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
+							$reply = isset($reply['content']['validation']) ? $reply['content']['validation'] : "Maaf, pendaftaran tidak berhasil\nKetik: BYR<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
 						}
 					}else{
-						$reply = "Maaf, format SMS salah\nKetik: REG<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
+						$reply = "Maaf, format SMS salah\nKetik: BYR<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
 					}
 				}else{
-					$reply = "Maaf, Nomor BPJS tidak terdaftar\nKetik: REG<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
+					$reply = "Maaf, Nomor BPJS tidak terdaftar\nKetik: BYR<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
 				}
 			}
 

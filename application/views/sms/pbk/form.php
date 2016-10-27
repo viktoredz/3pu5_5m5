@@ -39,6 +39,16 @@
                 ?>">
             </div>
             <div class="form-group">
+              <label>NIK</label>
+              <input type="text" class="form-control" name="nik" placeholder="No NIK" value="<?php 
+                if(set_value('nik')=="" && isset($nik)){
+                  echo $nik;
+                }else{
+                  echo  set_value('nik');
+                }
+                ?>">
+            </div>
+            <div class="form-group">
               <label>No BPJS</label>
               <input type="text" class="form-control" name="bpjs" placeholder="No BPJS" value="<?php 
                 if(set_value('bpjs')=="" && isset($bpjs)){

@@ -17,7 +17,7 @@ class Cli extends CI_Controller {
 			ini_set('output_buffering', 'Off');
 			ini_set('implicit_flush', 'On');
 			
-			$cl_phc = array('P3171070101');
+			$cl_phc = array('P3171070101','P3171070102','P3171070103','P3171070104','P3171070105','P3171070106','P3171070107');
 			foreach ($cl_phc as $code) {
 				$this->pasien_search($code);
 			}
@@ -93,10 +93,8 @@ class Cli extends CI_Controller {
 			$pasien = $res['content'];
 			$count 	= 0;
 			foreach ($pasien as $dt) {
-				$register = $this->cli_model->register($dt);
-				//$code = substr($puskesmas,1,10);
-				//$next = $this->cli_model->register($dt, $code);
-				echo "\n".$count++." -> ".$dt['id'].":".$register;
+				$register = $this->cli_model->register($dt,$cl_phc);
+				echo "\n".$count++." -> ".$cl_phc." :: ".$dt['id'].":".$register;
 			}
 		}else{
 			echo "No data";

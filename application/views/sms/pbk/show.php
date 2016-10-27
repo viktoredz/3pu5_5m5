@@ -20,12 +20,13 @@
     		<div class="col-md-9">
 			 	<button type="button" class="btn btn-primary" onclick="document.location.href='<?php echo base_url()?>sms/pbk/add'"><i class='fa fa-plus-square-o'></i> &nbsp; Tambah Nomor</button>
 			 	<button type="button" class="btn btn-success" id="btn-refresh"><i class='fa fa-refresh'></i> &nbsp; Refresh</button>
-			 	<button type="button" class="btn btn-danger" id="btn-export"><i class='fa fa-save'></i> &nbsp; Export</button>
+			 	<button type="button" class="btn btn-warning" id="btn-export"><i class='fa fa-save'></i> &nbsp; Export</button>
+			 	<button type="button" class="btn btn-danger" id="btn-sync"><i class='fa fa-retweet'></i> &nbsp; Sync</button>
 			 </div>
     		<div class="col-md-3">
 	     		<select id="id_sms_grup" class="form-control">
 	     			<option value="">-- Pilih Grup --</option>
-					<?php foreach ($grupoption as $row ) { ;?>
+					<?php foreach ($grupoption as $row ) { ?>
 						<option value="<?php echo $row->id_grup; ?>" ><?php echo $row->nama; ?></option>
 					<?php }?>
 	     	</select>
@@ -167,7 +168,7 @@
 
 	function btn_del(id){
 		$("#popup").hide();
-		$("#popup_content_del").html("<div style='padding:5px'><br><div style='text-align:center'>Hapus Data?<br><br><input class='btn btn-danger' style='width:100px' type='button' value='Delete' onClick='del_pasien("+id+")'>&nbsp;&nbsp;<input class='btn btn-success' style='width:100px' type='button' value='Batal' onClick='close_popup_del()'></div></div>");
+		$("#popup_content_del").html("<div style='padding:5px'><br><div style='text-align:center'>Hapus Data?<br><br><input class='btn btn-danger' style='width:100px' type='button' value='Delete' onClick='del_pasien(\""+id+"\")'>&nbsp;&nbsp;<input class='btn btn-success' style='width:100px' type='button' value='Batal' onClick='close_popup_del()'></div></div>");
           $("#popup_del").jqxWindow({
             theme: theme, resizable: false,
             width: 250,

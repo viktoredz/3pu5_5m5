@@ -49,6 +49,7 @@ class Pbk_model extends CI_Model {
 		$data['cl_pid']			= $this->input->post('cl_pid');
 		$data['nomor']			= $this->input->post('nomor');
 		$data['bpjs']			= $this->input->post('bpjs');
+		$data['nik']			= $this->input->post('nik');
 		$data['nama']			= $this->input->post('nama');
 		$data['alamat']			= $this->input->post('alamat');
 		$data['id_sms_grup']	= $this->input->post('id_sms_grup');
@@ -68,6 +69,7 @@ class Pbk_model extends CI_Model {
     {
 		$data['nomor']			= $this->input->post('nomor');
 		$data['bpjs']			= $this->input->post('bpjs');
+		$data['nik']			= $this->input->post('nik');
 		$data['nama']			= $this->input->post('nama');
 		$data['alamat']			= $this->input->post('alamat');
 		$data['id_sms_grup']	= $this->input->post('id_sms_grup');

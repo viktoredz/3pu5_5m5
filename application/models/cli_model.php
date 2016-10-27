@@ -54,16 +54,19 @@ class Cli_model extends CI_Model {
     	return "('".implode("','", $data)."')";
     }
 
-    function register($dt){
+    function register($dt,$cl_phc){
 
+        $this->db->where('cl_phc',$cl_phc);
         $this->db->where('cl_pid',$dt['id']);
         $check = $this->db->get('sms_pbk')->row();
         if(empty($check->cl_pid)){
             $pbk = array(
                 'cl_pid'    => $dt['id'],
+                'cl_phc'    => $cl_phc,
                 'bpjs'      => $dt['no_bpjs'],
                 'nomor'     => $dt['nohp'],
                 'alamat'    => $dt['alamat'],
+                'nik'       => $dt['nik'],
                 'nama'      => $dt['nama_lengkap']
             );
             if($this->db->insert('sms_pbk',$pbk)){
@@ -77,17 +80,20 @@ class Cli_model extends CI_Model {
                 $pbk = array(
                     'bpjs'      => $dt['no_bpjs'],
                     'alamat'    => $dt['alamat'],
+                    'nik'       => $dt['nik'],
                     'nama'      => $dt['nama_lengkap']
                 );
             }else{
                 $pbk = array(
                     'bpjs'      => $dt['no_bpjs'],
                     'nomor'     => $dt['nohp'],
+                    'nik'       => $dt['nik'],
                     'alamat'    => $dt['alamat'],
                     'nama'      => $dt['nama_lengkap']
                 );
             }
             $this->db->where('cl_pid',$dt['id']);
+            $this->db->where('cl_phc',$cl_phc);
             if($this->db->update('sms_pbk',$pbk)){
                 return "update";
             }else{
