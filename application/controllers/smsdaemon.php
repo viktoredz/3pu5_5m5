@@ -190,6 +190,7 @@ class Smsdaemon extends CI_Controller {
 		echo "sms.daftar ...\n";
 
 		$operator = "'*123#','*111#','V-Tri','+3','3'";
+		$format   = "\nKetik: BYR<spasi>NIK<spasi>KD POLI<spasi>KD PUSKESMAS<spasi>DD-MM-YYYY\natau Ketik:BPJS<spasi>NO BPJS<spasi>KD POLI<spasi>KD PUSKESMAS<spasi>DD-MM-YYYY";
 
 		//jika sms blm di proses, bukan operator, BYR/BPJS daftar 
 		$this->db->select('ID, SUBSTRING_INDEX(`TextDecoded`," ",1) as `keyword`,`SenderNumber`,`TextDecoded`',false);
@@ -199,45 +200,46 @@ class Smsdaemon extends CI_Controller {
 		$inbox = $this->db->get("inbox")->result_array();
 		foreach ($inbox as $rows) {
 			$keyword = strtoupper($rows['keyword']);
-			if($keyword == "BYR"){
-	            $nomor    = "#".$rows['SenderNumber'];
-				$this->db->where("nomor",$sender1);
-				$this->db->or_where("nomor",$sender2);
-				$this->db->or_where("nomor",$sender3);
-				$this->db->or_where("nomor",$sender4);
-				$pbk = $this->db->get("sms_pbk")->row();
-				if(!empty($pbk->cl_pid)){
-					echo "\nUMUM ".$pbk->cl_pid.": ".$rows['TextDecoded'];
-					$reply = $this->epus_pendaftaran($pbk->cl_pid, $rows['TextDecoded'], $args);
-					if(isset($reply) && $reply['status_code']['code']=="200"){
-						$reply = isset($reply['content'][0]) ? $reply['content'][0] : "Maaf, pendaftaran tidak berhasil\nKetik: BYR<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
-					}else{
-						$reply = isset($reply['content']['validation']) ? $reply['content']['validation'] : "Maaf, pendaftaran tidak berhasil\nKetik: BYR<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
-					}
-				}else{
-					$reply = "Maaf, Nomor HP anda tidak terdaftar\nKetik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
-				}
-			}else{
-	            $text   = explode(" ",$rows['TextDecoded']);
-	            $bpjs 	= $text[1];
-				$this->db->where("bpjs",$bpjs);
-				$pbk = $this->db->get("sms_pbk")->row();
-				if(!empty($pbk->cl_pid)){
-					if(isset($text[3])){
-						$sms = "BYR ".$text[2]." ".$text[3];
-						echo "\nBPJS ".$pbk->cl_pid.": ".$sms;
-						$reply = $this->epus_pendaftaran($pbk->cl_pid, $sms, $args);
+            $text   = explode(" ",$rows['TextDecoded']);
+            if(count($text)==5){
+				if($keyword == "BYR"){
+		            $nik 	= $text[1];
+					$this->db->where("nik",$nik);
+					$pbk = $this->db->get("sms_pbk")->row();
+					if(!empty($pbk->cl_pid)){
+						echo "\nBYR ".$pbk->cl_pid.": ".$rows['TextDecoded'];
+						$reply = $this->epus_pendaftaran($pbk->cl_pid, $rows['TextDecoded'], $args);
 						if(isset($reply) && $reply['status_code']['code']=="200"){
-							$reply = isset($reply['content'][0]) ? $reply['content'][0] : "Maaf, pendaftaran tidak berhasil\nKetik: BYR<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
+							$reply = isset($reply['content'][0]) ? $reply['content'][0] : "Maaf, pendaftaran tidak berhasil".$format;
 						}else{
-							$reply = isset($reply['content']['validation']) ? $reply['content']['validation'] : "Maaf, pendaftaran tidak berhasil\nKetik: BYR<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
+							$reply = isset($reply['content']['validation']) ? $reply['content']['validation'] : "Maaf, pendaftaran tidak berhasil".$format;
 						}
 					}else{
-						$reply = "Maaf, format SMS salah\nKetik: BYR<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
+						$reply = "Maaf, Nomor HP anda tidak terdaftar".$format;
 					}
 				}else{
-					$reply = "Maaf, Nomor BPJS tidak terdaftar\nKetik: BYR<spasi>DD-MM-YYYY<spasi>NAMAPOLI\natau Ketik:BPJS<spasi>NOMORBPJS<spasi>DD-MM-YYYY<spasi>NAMAPOLI";
+		            $bpjs 	= $text[1];
+					$this->db->where("bpjs",$bpjs);
+					$pbk = $this->db->get("sms_pbk")->row();
+					if(!empty($pbk->cl_pid)){
+						if(isset($text[3])){
+							$sms = "BYR ".$text[2]." ".$text[3];
+							echo "\nBPJS ".$pbk->cl_pid.": ".$sms;
+							$reply = $this->epus_pendaftaran($pbk->cl_pid, $sms, $args);
+							if(isset($reply) && $reply['status_code']['code']=="200"){
+								$reply = isset($reply['content'][0]) ? $reply['content'][0] : "Maaf, pendaftaran gagal".$format;
+							}else{
+								$reply = isset($reply['content']['validation']) ? $reply['content']['validation'] : "Maaf, pendaftaran gagal".$format;
+							}
+						}else{
+							$reply = "Maaf, format SMS salah".$format;
+						}
+					}else{
+						$reply = "Maaf, No.BPJS tidak terdaftar".$format;
+					}
 				}
+			}else{
+				$reply = "Maaf, format SMS salah\nKetik: BYR<spasi>NIK<spasi>KD.POLI<spasi>KD.PUSKESMAS<spasi>DD-MM-YYYY<spasi>\natau Ketik:BPJS<spasi>NO.BPJS<spasi>KD.POLI<spasi>KD.PUSKESMAS<spasi>DD-MM-YYYY";
 			}
 
 			if($send = $this->sms_send($rows['SenderNumber'],$reply)){
