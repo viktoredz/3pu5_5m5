@@ -257,6 +257,7 @@ class Pbk extends CI_Controller {
 				'id'		=> $act->nomor,
 				'nomor'		=> '+62 - '.$act->nomor,
 				'nama' 		=> $act->nama,
+				'nik' 		=> $act->nik,
 				'nama_grup'	=> $act->nama_grup,
 				'created_on'=> $act->created_on
 			);
