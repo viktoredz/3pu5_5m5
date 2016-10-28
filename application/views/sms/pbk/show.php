@@ -17,7 +17,7 @@
           <h3 class="box-title">{title_form}</h3>
 	    </div>
 	      <div class="box-footer">
-    		<div class="col-md-9">
+    		<div class="col-md-6">
 			 	<button type="button" class="btn btn-primary" onclick="document.location.href='<?php echo base_url()?>sms/pbk/add'"><i class='fa fa-plus-square-o'></i> &nbsp; Tambah Nomor</button>
 			 	<button type="button" class="btn btn-success" id="btn-refresh"><i class='fa fa-refresh'></i> &nbsp; Refresh</button>
 			 	<button type="button" class="btn btn-warning" id="btn-export"><i class='fa fa-save'></i> &nbsp; Export</button>
@@ -28,6 +28,14 @@
 	     			<option value="">-- Pilih Grup --</option>
 					<?php foreach ($grupoption as $row ) { ?>
 						<option value="<?php echo $row->id_grup; ?>" ><?php echo $row->nama; ?></option>
+					<?php }?>
+	     	</select>
+			</div>
+    		<div class="col-md-3">
+	     		<select id="id_puskesmas" class="form-control">
+	     			<option value="">-- Pilih Puskesmas --</option>
+					<?php foreach ($puskesmas as $row ) { ?>
+						<option value="<?php echo $row->code; ?>" ><?php echo $row->value; ?></option>
 					<?php }?>
 	     	</select>
 			</div>
@@ -52,6 +60,12 @@
 			});
 		});
 
+		$("#id_puskesmas").change(function(){
+			$.post("<?php echo base_url().'sms/pbk/filter' ?>", 'id_puskesmas='+$(this).val(),  function(){
+				$("#jqxgrid_pbk").jqxGrid('updatebounddata', 'cells');
+			});
+		});
+		
 		$("#btn-export").click(function(){
 			var post = "";
 			var filter = $("#jqxgrid_pbk").jqxGrid('getfilterinformation');

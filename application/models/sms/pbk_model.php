@@ -33,6 +33,12 @@ class Pbk_model extends CI_Model {
 		$query->free_result();    
 	}
 
+    function get_puskesmas($limit=999999,$start=0){
+    	$this->db->order_by('code','asc');
+        $query = $this->db->get('cl_phc',$limit,$start);
+        return $query->result();
+    }
+
     function get_grupoption($limit=999999,$start=0){
     	$this->db->order_by('nama','asc');
         $query = $this->db->get('sms_grup',$limit,$start);

@@ -19,7 +19,9 @@ class Pbk extends CI_Controller {
 		$data['title_form'] = "Nomor Terdaftar";
 
 		$this->session->unset_userdata('filter_id_sms_grup');
+		$this->session->unset_userdata('filter_id_puskesmas');
 
+		$data['puskesmas'] 	= $this->pbk_model->get_puskesmas();
 		$data['grupoption'] 	= $this->pbk_model->get_grupoption();
 		$data['content'] = $this->parser->parse("sms/pbk/show",$data,true);
 
@@ -56,9 +58,15 @@ class Pbk extends CI_Controller {
 				$this->db->order_by($ord, $this->input->post('sortorder'));
 			}
 		}
+
 		if($this->session->userdata('filter_id_sms_grup') != '') {
 			$this->db->where('sms_pbk.id_sms_grup',$this->session->userdata('filter_id_sms_grup'));
 		}
+
+		if($this->session->userdata('filter_id_puskesmas') != '') {
+			$this->db->where('sms_pbk.cl_phc',$this->session->userdata('filter_id_puskesmas'));
+		}
+
 		$rows_all = $this->pbk_model->get_data();
 
 		if($_POST) {
@@ -87,9 +95,15 @@ class Pbk extends CI_Controller {
 				$this->db->order_by($ord, $this->input->post('sortorder'));
 			}
 		}
+
 		if($this->session->userdata('filter_id_sms_grup') != '') {
 			$this->db->where('sms_pbk.id_sms_grup',$this->session->userdata('filter_id_sms_grup'));
 		}
+
+		if($this->session->userdata('filter_id_puskesmas') != '') {
+			$this->db->where('sms_pbk.cl_phc',$this->session->userdata('filter_id_puskesmas'));
+		}
+
 		$rows = $this->pbk_model->get_data($this->input->post('recordstartindex'), $this->input->post('pagesize'));
 		$data = array();
 		$no=1;
@@ -122,6 +136,12 @@ class Pbk extends CI_Controller {
 				$this->session->set_userdata('filter_id_sms_grup',$this->input->post('id_sms_grup'));
 			}else{
 				$this->session->unset_userdata('filter_id_sms_grup');
+			}
+
+			if($this->input->post('id_puskesmas') != '') {
+				$this->session->set_userdata('filter_id_puskesmas',$this->input->post('id_puskesmas'));
+			}else{
+				$this->session->unset_userdata('filter_id_puskesmas');
 			}
 		}
 	}
@@ -240,9 +260,15 @@ class Pbk extends CI_Controller {
 				$this->db->order_by($ord, $this->input->post('sortorder'));
 			}
 		}
+		
 		if($this->session->userdata('filter_id_sms_grup') != '') {
 			$this->db->where('sms_pbk.id_sms_grup',$this->session->userdata('filter_id_sms_grup'));
 		}
+
+		if($this->session->userdata('filter_id_puskesmas') != '') {
+			$this->db->where('sms_pbk.cl_phc',$this->session->userdata('filter_id_puskesmas'));
+		}
+
 		$rows = $this->pbk_model->get_data();
 
 		$data = array();
