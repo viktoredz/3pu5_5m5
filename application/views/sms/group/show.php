@@ -123,8 +123,8 @@
 
 				$("#popup_content").html("<div style='padding:5px' align='center'><br>"+rowData.nama+
 				"</br><br><div style='text-align:center'><input class='btn btn-success' style='width:100px' type='button' value='Edit' onClick='edit(\""+
-				rowData.no+"\")'>&nbsp;&nbsp;<input class='btn btn-danger' style='width:100px' type='button' value='Delete' onClick='btn_del(\""+
-				rowData.no+"\")'><br><br><input class='btn btn-warning' style='width:205px' type='button' value='Close' onClick='close_popup();'></div></div>");
+				rowData.id+"\")'>&nbsp;&nbsp;<input class='btn btn-danger' style='width:100px' type='button' value='Delete' onClick='btn_del(\""+
+				rowData.id+"\")'><br><br><input class='btn btn-warning' style='width:205px' type='button' value='Close' onClick='close_popup();'></div></div>");
 
 				$("html, body").animate({ scrollTop: 0 }, "slow");
 				$("#popup").jqxWindow('open');

@@ -239,7 +239,7 @@ class Smsdaemon extends CI_Controller {
 					}
 				}
 			}else{
-				$reply = "Maaf, format SMS salah\nKetik: BYR<spasi>NIK<spasi>KD.POLI<spasi>KD.PUSKESMAS<spasi>DD-MM-YYYY<spasi>\natau Ketik:BPJS<spasi>NO.BPJS<spasi>KD.POLI<spasi>KD.PUSKESMAS<spasi>DD-MM-YYYY";
+				$reply = "Maaf, format SMS salah".$format;
 			}
 
 			if($send = $this->sms_send($rows['SenderNumber'],$reply)){
