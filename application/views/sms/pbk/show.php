@@ -54,6 +54,13 @@
 		$("#menu_esms").addClass("active");
 		$("#menu_sms_pbk").addClass("active");
 
+		$("#popup").jqxWindow({
+			theme: theme, resizable: false,
+			width: 250,
+			height: 180,
+			isModal: true, autoOpen: false, modalOpacity: 0.2
+		});
+
 		$("#id_sms_grup").change(function(){
 			$.post("<?php echo base_url().'sms/pbk/filter' ?>", 'id_sms_grup='+$(this).val(),  function(){
 				$("#jqxgrid_pbk").jqxGrid('updatebounddata', 'cells');
@@ -66,6 +73,17 @@
 			});
 		});
 		
+		$("#btn-sync").click(function(){
+			$("#btn-sync").hide('fade');
+			$.post("<?php echo base_url().'cli/sync_epus' ?>/"+$("#id_puskesmas").val(),  function(res){
+		        $("#popup_content").html("<div style='padding:5px' align='center'><input class='btn btn-warning' style='width:204px' type='button' value='Close' onClick='close_popup()'><br><br>"+res+"</br></div></div>");
+	 			$("html, body").animate({ scrollTop: 0 }, "slow");
+				$("#popup").jqxWindow('open');
+				$("#jqxgrid_pbk").jqxGrid('updatebounddata', 'cells');
+				$("#btn-sync").show('fade');
+			});
+		});
+
 		$("#btn-export").click(function(){
 			var post = "";
 			var filter = $("#jqxgrid_pbk").jqxGrid('getfilterinformation');
@@ -98,12 +116,6 @@
 			});
 		});
 
-		$("#popup").jqxWindow({
-			theme: theme, resizable: false,
-			width: 250,
-			height: 180,
-			isModal: true, autoOpen: false, modalOpacity: 0.2
-		});
 	});
 
       var btn_confirm = "</br></br><input class='btn btn-danger' style='width:100px' type='button' value='Ya' onClick='sync()'> <input class='btn btn-success' style='width:100px' type='button' value='Tidak' onClick='close_popup()'>";

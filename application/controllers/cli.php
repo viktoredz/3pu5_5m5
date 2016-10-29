@@ -29,6 +29,18 @@ class Cli extends CI_Controller {
 		}
 	}
 
+	function sync_epus($kode=""){
+		if($kode==""){
+			$cl_phc = array('P3171070101','P3171070102','P3171070103','P3171070104','P3171070105','P3171070106','P3171070107');
+		}else{
+			$cl_phc = array($kode);
+		}
+		
+		foreach ($cl_phc as $code) {
+			$this->pasien_search($code);
+		}		
+	}
+
     function sync_bpjs(){
     	sleep(1);
 		$pasien = $this->cli_model->get_pasien_bpjs_nohp_null();
@@ -97,7 +109,7 @@ class Cli extends CI_Controller {
 				echo "\n".$count++." -> ".$cl_phc." :: ".$dt['id'].":".$register;
 			}
 		}else{
-			echo "No data";
+			echo "\nNo data";
 		}
 	}
 
