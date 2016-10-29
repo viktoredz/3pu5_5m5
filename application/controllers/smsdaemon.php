@@ -21,7 +21,7 @@ class Smsdaemon extends CI_Controller {
 			ini_set('output_buffering', 'Off');
 			ini_set('implicit_flush', 'On');
 			
-			for($i=1;$i<2;$i++){
+			for($i=1;$i<5;$i++){
 				echo("\n".date("d-m-Y h:i:s") ." ".$i." ".$args." versi 1.0");
 				
 				$this->sms_reply($args);
@@ -52,8 +52,8 @@ class Smsdaemon extends CI_Controller {
 
 		if($this->db->insert('outbox',$data)){
 			if($ID != ""){
-				//$this->db->where('ID',$ID);
-				//$this->db->update('inbox',array('Processed'=>"true"));
+				$this->db->where('ID',$ID);
+				$this->db->update('inbox',array('Processed'=>"true"));
 			}
 		}
 	}
