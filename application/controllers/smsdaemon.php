@@ -21,7 +21,7 @@ class Smsdaemon extends CI_Controller {
 			ini_set('output_buffering', 'Off');
 			ini_set('implicit_flush', 'On');
 			
-			for($i=1;$i<5;$i++){
+			for($i=1;$i<2;$i++){
 				echo("\n".date("d-m-Y h:i:s") ." ".$i." ".$args." versi 1.0");
 				
 				$this->sms_reply($args);
@@ -41,7 +41,7 @@ class Smsdaemon extends CI_Controller {
 
 	}
 	
-	function sms_send($nomor = "", $pesan=""){
+	function sms_send($nomor = "", $pesan="" ,$ID=""){
 		$data = array();
 		$time = date("Y-m-d H:i:s");
 		$data['InsertIntoDB'] 		= $time;
@@ -50,7 +50,12 @@ class Smsdaemon extends CI_Controller {
 		$data['DestinationNumber'] 	= $nomor;
 		$data['TextDecoded'] 		= $pesan;
 
-		return $this->db->insert('outbox',$data);
+		if($this->db->insert('outbox',$data)){
+			if($ID != ""){
+				//$this->db->where('ID',$ID);
+				//$this->db->update('inbox',array('Processed'=>"true"));
+			}
+		}
 	}
 	
 	function sms_wrong($nomor = "", $pesan="" , $menu=""){
@@ -107,7 +112,7 @@ class Smsdaemon extends CI_Controller {
 		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
 		$this->db->where("SUBSTRING_INDEX(TextDecoded,' ',1) NOT IN (SELECT `code` FROM `sms_info_menu`)");
 		$this->db->where("SUBSTRING_INDEX(TextDecoded,' ',1) NOT IN (SELECT `nama` FROM `sms_tipe` WHERE jenis='terima')");
-		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("BYR","BPJS","Byr","Bpjs","byr","bpjs")');
+		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("UMUM","Umum","umum","BYR","BPJS","Byr","Bpjs","byr","bpjs")');
 		$inbox = $this->db->get("inbox")->result();
 		foreach ($inbox as $rows) {
 
@@ -131,7 +136,7 @@ class Smsdaemon extends CI_Controller {
 		$this->db->where("Processed","false");
 		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
 		$this->db->where("SUBSTRING_INDEX(TextDecoded,' ',1) IN (SELECT `code` FROM `sms_info_menu`)");
-		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("BYR","BPJS","Byr","Bpjs","byr","bpjs")');
+		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("UMUM","Umum","umum","BYR","BPJS","Byr","Bpjs","byr","bpjs")');
 		$inbox = $this->db->get("inbox")->result();
 		foreach ($inbox as $rows) {
 			$text = explode(" ",$rows->TextDecoded);
@@ -169,7 +174,7 @@ class Smsdaemon extends CI_Controller {
 		$this->db->where("Processed","false");
 		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
 		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) IN (SELECT `nama` FROM `sms_tipe` WHERE jenis="terima")');
-		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("BYR","BPJS","Byr","Bpjs","byr","bpjs")');
+		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("UMUM","Umum","umum","BYR","BPJS","Byr","Bpjs","byr","bpjs")');
 		$this->db->join('sms_tipe','sms_tipe.nama=SUBSTRING_INDEX(`TextDecoded`," ", 1)','inner');
 		$inbox = $this->db->get("inbox")->result();
 		foreach ($inbox as $rows) {
@@ -196,56 +201,123 @@ class Smsdaemon extends CI_Controller {
 		$this->db->select('ID, SUBSTRING_INDEX(`TextDecoded`," ",1) as `keyword`,`SenderNumber`,`TextDecoded`',false);
 		$this->db->where("Processed","false");
 		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
-		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) IN ("BYR","BPJS","Byr","Bpjs","byr","bpjs")');
+		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) IN ("UMUM","Umum","umum","BYR","BPJS","Byr","Bpjs","byr","bpjs")');
 		$inbox = $this->db->get("inbox")->result_array();
 		foreach ($inbox as $rows) {
 			$keyword = strtoupper($rows['keyword']);
             $text   = explode(" ",$rows['TextDecoded']);
             if(count($text)==5){
-				if($keyword == "BYR"){
-		            $nik 	= $text[1];
+	            $poli 		= $text[2];
+	            $puskesmas 	= $text[3];
+	            $tgl 		= $text[4];
+
+				if($keyword == "BYR" || $keyword == "UMUM"){
+		            $nik 		= $text[1];
+
 					$this->db->where("nik",$nik);
 					$pbk = $this->db->get("sms_pbk")->row();
 					if(!empty($pbk->cl_pid)){
-						echo "\nBYR ".$pbk->cl_pid.": ".$rows['TextDecoded'];
-						$reply = $this->epus_pendaftaran($pbk->cl_pid, $rows['TextDecoded'], $args);
-						if(isset($reply) && $reply['status_code']['code']=="200"){
-							$reply = isset($reply['content'][0]) ? $reply['content'][0] : "Maaf, pendaftaran tidak berhasil".$format;
-						}else{
-							$reply = isset($reply['content']['validation']) ? $reply['content']['validation'] : "Maaf, pendaftaran tidak berhasil".$format;
-						}
+			            $cl_pid	= $pbk->cl_pid;
 					}else{
-						$reply = "Maaf, Nomor HP anda tidak terdaftar".$format;
+						$reply = "Maaf, NIK anda belum terdaftar".$format;
+						$this->sms_send($rows['SenderNumber'],$reply,$rows['ID']);
+						continue;
 					}
 				}else{
-		            $bpjs 	= $text[1];
+		            $bpjs 		= $text[1];
+
 					$this->db->where("bpjs",$bpjs);
 					$pbk = $this->db->get("sms_pbk")->row();
 					if(!empty($pbk->cl_pid)){
-						if(isset($text[3])){
-							$sms = "BYR ".$text[2]." ".$text[3];
-							echo "\nBPJS ".$pbk->cl_pid.": ".$sms;
-							$reply = $this->epus_pendaftaran($pbk->cl_pid, $sms, $args);
-							if(isset($reply) && $reply['status_code']['code']=="200"){
-								$reply = isset($reply['content'][0]) ? $reply['content'][0] : "Maaf, pendaftaran gagal".$format;
-							}else{
-								$reply = isset($reply['content']['validation']) ? $reply['content']['validation'] : "Maaf, pendaftaran gagal".$format;
-							}
-						}else{
-							$reply = "Maaf, format SMS salah".$format;
-						}
+			            $cl_pid	= $pbk->cl_pid;
 					}else{
-						$reply = "Maaf, No.BPJS tidak terdaftar".$format;
+						$reply = "Maaf, No.BPJS anda belum terdaftar".$format;
+						$this->sms_send($rows['SenderNumber'],$reply,$rows['ID']);
+						continue;
 					}
 				}
+
+				$this->db->where("keyword",$puskesmas);
+				$puskesmas = $this->db->get("cl_phc")->row();
+				if(!empty($puskesmas->code)){
+		            $valid_puskesmas	= $puskesmas->code;
+				}else{
+					$kode = array();
+					$keyword = $this->db->get("cl_phc")->result();
+					foreach ($keyword as $val) {
+						$kode[] = $val->keyword;
+					}
+					$keyword_puskesmas = implode("\n-", $kode);
+
+					$reply = "Maaf, Kode puskesmas salah, gunakan: \n-".$keyword_puskesmas;
+					$this->sms_send($rows['SenderNumber'],$reply,$rows['ID']);
+					continue;
+				}
+
+
+				$this->db->where("keyword",$poli);
+				$clinic = $this->db->get("cl_clinic")->row();
+				if(!empty($clinic->kode)){
+		            $valid_poli	= $clinic->kode;
+				}else{
+					$kode = array();
+					$this->db->where("keyword <> ''");
+					$keyword = $this->db->get("cl_clinic")->result();
+					foreach ($keyword as $val) {
+						$kode[] = $val->keyword;
+					}
+					$keyword_poli = implode("\n-", $kode);
+
+					$reply = "Maaf, Kode poli salah, gunakan: \n-".$keyword_poli;
+					$this->sms_send($rows['SenderNumber'],$reply,$rows['ID']);
+					continue;
+				}
+
+
+            	$tgl_error = false;
+                $daftar_tanggal = explode("-", $tgl);
+                if (count($daftar_tanggal)!='3') {
+                	$tgl_error = true;
+                	$mana = 'tanggal';
+                }else{
+	                if (in_array($daftar_tanggal[0], array('01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31'))==FALSE) {
+	                	$tgl_error = true;
+                		$mana = 'hari';
+	                }
+
+	                if (in_array($daftar_tanggal[1], array('01','02','03','04','05','06','07','08','09','10','11','12'))==FALSE) {
+	                	$tgl_error = true;
+                		$mana = 'bulan';
+	                }
+
+	                if (!isset($daftar_tanggal[2]) || $daftar_tanggal[2]!=date("Y") && $daftar_tanggal[2]!=(date("Y")+1)) {
+	                	$tgl_error = true;
+                		$mana = 'tahun';
+	                }
+                }
+                
+
+                if($tgl_error){
+					$reply = $mana."-Maaf, format ".$mana." salah, gunakan: DD-MM-YYYY\nContoh: 01-02-2016 atau 31-12-2016";
+					$this->sms_send($rows['SenderNumber'],$reply,$rows['ID']);
+					continue;
+                }else{
+                	$valid_tgl = $tgl;
+                }
+
+				$api = $this->epus_pendaftaran($pbk->cl_pid, "REG ".$valid_tgl." ".$valid_poli, $valid_puskesmas);
+				if(is_array($api) && intval($api['status_code']['code']) < 400){
+					$reply = isset($api['content']['validation']) ? $api['content']['validation'] : "Maaf, ".$format;
+				}else{
+					$reply = $format;
+				}
+
 			}else{
 				$reply = "Maaf, format SMS salah".$format;
 			}
 
-			if($send = $this->sms_send($rows['SenderNumber'],$reply)){
-				$this->db->where('ID',$rows['ID']);
-				$this->db->update('inbox',array('Processed'=>"true"));
-			}
+			$this->sms_send($rows['SenderNumber'],$reply,$rows['ID']);
+			
 			echo $reply;
 		}
 	}
