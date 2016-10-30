@@ -5,7 +5,7 @@ $active_record = TRUE;
 
 $db['default']['hostname'] = "localhost";
 $db['default']['username'] = "root";
-$db['default']['password'] = "triadpass";
+$db['default']['password'] = "";
 $db['default']['database'] = "epus_sms_3171070";
 $db['default']['dbdriver'] = "mysql";
 $db['default']['dbprefix'] = "";

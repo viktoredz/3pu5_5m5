@@ -17,9 +17,9 @@ class Cli extends CI_Controller {
 			ini_set('output_buffering', 'Off');
 			ini_set('implicit_flush', 'On');
 			
-			$cl_phc = array('P3171070101','P3171070102','P3171070103','P3171070104','P3171070105','P3171070106','P3171070107');
-			foreach ($cl_phc as $code) {
-				$this->pasien_search($code);
+			$cl_phc = $this->db->get('cl_phc')->result();
+			foreach ($cl_phc as $cl) {
+				$this->pasien_search($cl->code);
 			}
 			//$this->cli_model->reset_pasien_bpjs_nohp_null();
 			$this->sync_bpjs();
@@ -31,14 +31,13 @@ class Cli extends CI_Controller {
 
 	function sync_epus($kode=""){
 		if($kode==""){
-			$cl_phc = array('P3171070101','P3171070102','P3171070103','P3171070104','P3171070105','P3171070106','P3171070107');
+			$cl_phc = $this->db->get('cl_phc')->result();
+			foreach ($cl_phc as $cl) {
+				$this->pasien_search($cl->code);
+			}
 		}else{
-			$cl_phc = array($kode);
+			$this->pasien_search($kode);
 		}
-		
-		foreach ($cl_phc as $code) {
-			$this->pasien_search($code);
-		}		
 	}
 
     function sync_bpjs(){
