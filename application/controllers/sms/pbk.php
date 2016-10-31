@@ -21,9 +21,9 @@ class Pbk extends CI_Controller {
 		$this->session->unset_userdata('filter_id_sms_grup');
 		$this->session->unset_userdata('filter_id_puskesmas');
 
-		$data['puskesmas'] 	= $this->pbk_model->get_puskesmas();
-		$data['grupoption'] 	= $this->pbk_model->get_grupoption();
-		$data['content'] = $this->parser->parse("sms/pbk/show",$data,true);
+		$data['phc']	 	= $this->pbk_model->get_puskesmas();
+		$data['grupoption']	= $this->pbk_model->get_grupoption();
+		$data['content'] 	= $this->parser->parse("sms/pbk/show",$data,true);
 
 		$this->template->show($data,"home");
 	}

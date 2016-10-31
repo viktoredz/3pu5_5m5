@@ -34,8 +34,8 @@
     		<div class="col-md-3">
 	     		<select id="id_puskesmas" class="form-control">
 	     			<option value="">-- Pilih Puskesmas --</option>
-					<?php foreach ($puskesmas as $row ) { ?>
-						<option value="<?php echo $row->code; ?>" ><?php echo $row->value; ?></option>
+					<?php foreach ($phc as $row ) { ?>
+						<option value="<?php echo $row->code; ?>" ><?php echo $row->keyword; ?> : <?php echo $row->value; ?></option>
 					<?php }?>
 	     	</select>
 			</div>
