@@ -18,8 +18,12 @@ class Pbk extends CI_Controller {
 		$data['title_group'] = "Buku Telepon";
 		$data['title_form'] = "Nomor Terdaftar";
 
-		$this->session->unset_userdata('filter_id_sms_grup');
-		$this->session->unset_userdata('filter_id_puskesmas');
+		//$this->session->unset_userdata('filter_id_sms_grup');
+		//$this->session->unset_userdata('filter_id_puskesmas');
+		$data['cl_phc']	 	= $this->session->userdata('filter_id_puskesmas');
+		$data['sms_grup']	= $this->session->userdata('filter_id_sms_grup');
+
+
 
 		$data['phc']	 	= $this->pbk_model->get_puskesmas();
 		$data['grupoption']	= $this->pbk_model->get_grupoption();
@@ -65,6 +69,8 @@ class Pbk extends CI_Controller {
 
 		if($this->session->userdata('filter_id_puskesmas') != '') {
 			$this->db->where('sms_pbk.cl_phc',$this->session->userdata('filter_id_puskesmas'));
+		}else{
+			$this->db->where('sms_pbk.cl_phc','-');
 		}
 
 		$rows_all = $this->pbk_model->get_data();
@@ -102,6 +108,8 @@ class Pbk extends CI_Controller {
 
 		if($this->session->userdata('filter_id_puskesmas') != '') {
 			$this->db->where('sms_pbk.cl_phc',$this->session->userdata('filter_id_puskesmas'));
+		}else{
+			$this->db->where('sms_pbk.cl_phc','-');
 		}
 
 		$rows = $this->pbk_model->get_data($this->input->post('recordstartindex'), $this->input->post('pagesize'));
@@ -143,12 +151,15 @@ class Pbk extends CI_Controller {
 			}else{
 				$this->session->unset_userdata('filter_id_puskesmas');
 			}
+				echo $this->session->userdata('filter_id_sms_grup') ;
+				echo $this->session->userdata('filter_id_puskesmas') ;
 		}
 	}
 
 	function add(){
 		$this->authentication->verify('sms','add');
 
+        $this->form_validation->set_rules('cl_phc', 'Puskesmas', 'trim|required');
         $this->form_validation->set_rules('cl_pid', 'No RM', 'trim|required');
         $this->form_validation->set_rules('nomor', 'Nomor', 'trim|required|callback_cekNomor');
         $this->form_validation->set_rules('nama', 'Nama', 'trim|required');
@@ -159,6 +170,7 @@ class Pbk extends CI_Controller {
 			$data['title_form']="Tambah Nomor Telepon";
 			$data['action']="add";
 			$data['nomor']="";
+			$data['phc']	 	= $this->pbk_model->get_puskesmas();
 
 			$data['grupoption'] 	= $this->pbk_model->get_grupoption();
 		
@@ -174,7 +186,7 @@ class Pbk extends CI_Controller {
 		$this->template->show($data,"home");
 	}
 
-	function edit($cl_pid=""){
+	function edit($cl_pid="", $cl_phc=""){
 		$this->authentication->verify('sms','edit');
 
         $this->form_validation->set_rules('cl_pid', 'No RM', 'trim|required');
@@ -184,31 +196,33 @@ class Pbk extends CI_Controller {
         $this->form_validation->set_rules('nomor', 'Nomor', 'trim');
 
 		if($this->form_validation->run()== FALSE){
-			$data 	= $this->pbk_model->get_data_row($cl_pid); 
+			$data 	= $this->pbk_model->get_data_row($cl_pid,$cl_phc); 
 
 			$data['title_group'] 	= "Buku Telepon";
 			$data['title_form']		= "Ubah Nomor Telepon";
 			$data['action']			= "edit";
 			$data['cl_pid']			= $cl_pid;
+			$data['cl_phc']			= $cl_phc;
+			$data['phc']	 		= $this->pbk_model->get_puskesmas(99,0,$cl_phc);
 
 			$data['grupoption'] 	= $this->pbk_model->get_grupoption();
 
 			$data['content'] 	= $this->parser->parse("sms/pbk/form",$data,true);
-		}elseif($this->pbk_model->update_entry($cl_pid)){
+		}elseif($this->pbk_model->update_entry($cl_pid,$cl_phc)){
 			$this->session->set_flashdata('alert_form', 'Save data successful...');
-			redirect(base_url()."sms/pbk/edit/".$cl_pid);
+			redirect(base_url()."sms/pbk/edit/".$cl_pid."/".$cl_phc);
 		}else{
 			$this->session->set_flashdata('alert_form', 'Save data failed...');
-			redirect(base_url()."sms/pbk/edit/".$cl_pid);
+			redirect(base_url()."sms/pbk/edit/".$cl_pid."/".$cl_phc);
 		}
 
 		$this->template->show($data,"home");
 	}
 
-	function dodel($kode=0,$code_cl_phc=""){
+	function dodel($kode=0,$cl_phc=""){
 		$this->authentication->verify('sms','del');
 
-		if($this->pbk_model->delete_entry($kode,$code_cl_phc)){
+		if($this->pbk_model->delete_entry($kode,$cl_phc)){
 			$this->session->set_flashdata('alert', 'Delete data ('.$kode.')');
 		}else{
 			$this->session->set_flashdata('alert', 'Delete data error');

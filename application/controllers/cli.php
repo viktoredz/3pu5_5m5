@@ -105,8 +105,12 @@ class Cli extends CI_Controller {
 			$count 	= 0;
 			foreach ($pasien as $dt) {
 				$register = $this->cli_model->register($dt,$cl_phc);
-				echo "\n".$count++." -> ".$cl_phc." :: ".$dt['id'].":".$register;
+				$count++;
+				if($this->input->is_cli_request()) {
+					echo "\n".$count." -> ".$cl_phc." :: ".$dt['id'].":".$register;
+				}
 			}
+			echo "<br>".$cl_phc." synced: ".$count;
 		}else{
 			echo "\nNo data";
 		}

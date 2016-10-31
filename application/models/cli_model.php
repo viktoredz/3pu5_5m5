@@ -64,7 +64,7 @@ class Cli_model extends CI_Model {
                 'cl_pid'    => $dt['id'],
                 'cl_phc'    => $cl_phc,
                 'bpjs'      => $dt['no_bpjs'],
-                'nomor'     => $dt['nohp'],
+                'nomor'     => substr($dt['nohp'],0,20),
                 'alamat'    => $dt['alamat'],
                 'nik'       => $dt['nik'],
                 'nama'      => $dt['nama_lengkap']
@@ -86,7 +86,7 @@ class Cli_model extends CI_Model {
             }else{
                 $pbk = array(
                     'bpjs'      => $dt['no_bpjs'],
-                    'nomor'     => $dt['nohp'],
+                    'nomor'     => substr($dt['nohp'],0,20),
                     'nik'       => $dt['nik'],
                     'alamat'    => $dt['alamat'],
                     'nama'      => $dt['nama_lengkap']

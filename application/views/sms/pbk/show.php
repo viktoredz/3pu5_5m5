@@ -27,7 +27,7 @@
 	     		<select id="id_sms_grup" class="form-control">
 	     			<option value="">-- Pilih Grup --</option>
 					<?php foreach ($grupoption as $row ) { ?>
-						<option value="<?php echo $row->id_grup; ?>" ><?php echo $row->nama; ?></option>
+						<option value="<?php echo $row->id_grup; ?>" <?php if($sms_grup==$row->id_grup) echo "selected"; ?>><?php echo $row->nama; ?></option>
 					<?php }?>
 	     	</select>
 			</div>
@@ -35,7 +35,7 @@
 	     		<select id="id_puskesmas" class="form-control">
 	     			<option value="">-- Pilih Puskesmas --</option>
 					<?php foreach ($phc as $row ) { ?>
-						<option value="<?php echo $row->code; ?>" ><?php echo $row->keyword; ?> : <?php echo $row->value; ?></option>
+						<option value="<?php echo $row->code; ?>" <?php if($cl_phc==$row->code) echo "selected"; ?>><?php echo $row->keyword; ?> : <?php echo $row->value; ?></option>
 					<?php }?>
 	     	</select>
 			</div>
@@ -62,58 +62,70 @@
 		});
 
 		$("#id_sms_grup").change(function(){
-			$.post("<?php echo base_url().'sms/pbk/filter' ?>", 'id_sms_grup='+$(this).val(),  function(){
+			$.post("<?php echo base_url().'sms/pbk/filter' ?>", 'id_sms_grup='+$(this).val()+'&id_puskesmas='+$("#id_puskesmas").val(),  function(){
 				$("#jqxgrid_pbk").jqxGrid('updatebounddata', 'cells');
 			});
 		});
 
 		$("#id_puskesmas").change(function(){
-			$.post("<?php echo base_url().'sms/pbk/filter' ?>", 'id_puskesmas='+$(this).val(),  function(){
+			$.post("<?php echo base_url().'sms/pbk/filter' ?>", 'id_puskesmas='+$(this).val()+'&id_sms_grup='+$("#id_sms_grup").val(),  function(){
 				$("#jqxgrid_pbk").jqxGrid('updatebounddata', 'cells');
 			});
 		});
 		
 		$("#btn-sync").click(function(){
-			$("#btn-sync").hide('fade');
-			$.post("<?php echo base_url().'cli/sync_epus' ?>/"+$("#id_puskesmas").val(),  function(res){
-		        $("#popup_content").html("<div style='padding:5px' align='center'><input class='btn btn-warning' style='width:204px' type='button' value='Close' onClick='close_popup()'><br><br>"+res+"</br></div></div>");
+			if($("#id_puskesmas").val() == ""){
+		        $("#popup_content").html("<div style='padding:5px' align='center'><br>Silahkan pilih puskesmas<br><br><br><input class='btn btn-warning' style='width:204px' type='button' value='Close' onClick='close_popup()'></div></div>");
 	 			$("html, body").animate({ scrollTop: 0 }, "slow");
 				$("#popup").jqxWindow('open');
-				$("#jqxgrid_pbk").jqxGrid('updatebounddata', 'cells');
-				$("#btn-sync").show('fade');
-			});
+			}else{
+				$("#btn-sync").hide('fade');
+				$.post("<?php echo base_url().'cli/sync_epus' ?>/"+$("#id_puskesmas").val(),  function(res){
+			        $("#popup_content").html("<div style='padding:5px' align='center'><br>"+res+"</br><br><input class='btn btn-warning' style='width:204px' type='button' value='Close' onClick='close_popup()'></div></div>");
+		 			$("html, body").animate({ scrollTop: 0 }, "slow");
+					$("#popup").jqxWindow('open');
+					$("#jqxgrid_pbk").jqxGrid('updatebounddata', 'cells');
+					$("#btn-sync").show('fade');
+				});
+			}
 		});
 
 		$("#btn-export").click(function(){
-			var post = "";
-			var filter = $("#jqxgrid_pbk").jqxGrid('getfilterinformation');
-			for(i=0; i < filter.length; i++){
-				var fltr 	= filter[i];
-				var value	= fltr.filter.getfilters()[0].value;
-				var condition	= fltr.filter.getfilters()[0].condition;
-				var filteroperation	= fltr.filter.getfilters()[0].operation;
-				var filterdatafield	= fltr.filtercolumn;
+			if($("#id_puskesmas").val() == ""){
+		        $("#popup_content").html("<div style='padding:5px' align='center'><br>Silahkan pilih puskesmas<br><br><br><input class='btn btn-warning' style='width:204px' type='button' value='Close' onClick='close_popup()'></div></div>");
+	 			$("html, body").animate({ scrollTop: 0 }, "slow");
+				$("#popup").jqxWindow('open');
+			}else{
+				var post = "";
+				var filter = $("#jqxgrid_pbk").jqxGrid('getfilterinformation');
+				for(i=0; i < filter.length; i++){
+					var fltr 	= filter[i];
+					var value	= fltr.filter.getfilters()[0].value;
+					var condition	= fltr.filter.getfilters()[0].condition;
+					var filteroperation	= fltr.filter.getfilters()[0].operation;
+					var filterdatafield	= fltr.filtercolumn;
 
-				post = post+'&filtervalue'+i+'='+value;
-				post = post+'&filtercondition'+i+'='+condition;
-				post = post+'&filteroperation'+i+'='+filteroperation;
-				post = post+'&filterdatafield'+i+'='+filterdatafield;
-				post = post+'&'+filterdatafield+'operator=and';
-			}
-			post = post+'&filterscount='+i;
+					post = post+'&filtervalue'+i+'='+value;
+					post = post+'&filtercondition'+i+'='+condition;
+					post = post+'&filteroperation'+i+'='+filteroperation;
+					post = post+'&filterdatafield'+i+'='+filterdatafield;
+					post = post+'&'+filterdatafield+'operator=and';
+				}
+				post = post+'&filterscount='+i;
 
-			var sortdatafield = $("#jqxgrid_pbk").jqxGrid('getsortcolumn');
-			if(sortdatafield != "" && sortdatafield != null){
-				post = post + '&sortdatafield='+sortdatafield;
-			}
-			if(sortdatafield != null){
-				var sortorder = $("#jqxgrid_pbk").jqxGrid('getsortinformation').sortdirection.ascending ? "asc" : ($("#jqxgrid_pbk").jqxGrid('getsortinformation').sortdirection.descending ? "desc" : "");
-				post = post+'&sortorder='+sortorder;
-			}
+				var sortdatafield = $("#jqxgrid_pbk").jqxGrid('getsortcolumn');
+				if(sortdatafield != "" && sortdatafield != null){
+					post = post + '&sortdatafield='+sortdatafield;
+				}
+				if(sortdatafield != null){
+					var sortorder = $("#jqxgrid_pbk").jqxGrid('getsortinformation').sortdirection.ascending ? "asc" : ($("#jqxgrid_pbk").jqxGrid('getsortinformation').sortdirection.descending ? "desc" : "");
+					post = post+'&sortorder='+sortorder;
+				}
 
-			$.post("<?php echo base_url()?>sms/pbk/export",post  ,function(response){
-				window.location.href=response;
-			});
+				$.post("<?php echo base_url()?>sms/pbk/export",post  ,function(response){
+					window.location.href=response;
+				});
+			}
 		});
 
 	});
@@ -189,7 +201,7 @@
 		});
 
 	function btn_edit(id){
-		document.location.href="<?php echo base_url().'sms/pbk/edit/'; ?>" + id;
+		document.location.href="<?php echo base_url().'sms/pbk/edit/'; ?>" + id + "/" + $("#id_puskesmas").val();
 	}
 
 	function btn_del(id){
@@ -205,7 +217,7 @@
 	}
 
 	function del_pasien(id){
-		$.post("<?php echo base_url().'sms/pbk/dodel' ?>/" +id,  function(){
+		$.post("<?php echo base_url().'sms/pbk/dodel' ?>/" +id + "/" + $("#id_puskesmas").val(),  function(){
 		  $("#popup_content_del").html("<div style='padding:5px'><br><div style='text-align:center'>Data berhasil dihapus<br><br><input class='btn btn-danger' style='width:100px' type='button' value='OK' onClick='close_popup_del()'></div></div>");
           $("#popup_del").jqxWindow({
             theme: theme, resizable: false,

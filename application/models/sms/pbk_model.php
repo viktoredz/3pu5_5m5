@@ -19,9 +19,10 @@ class Pbk_model extends CI_Model {
 	
     }
 
- 	function get_data_row($id){
+ 	function get_data_row($id,$cl_phc){
 		$data = array();
 		$this->db->where("cl_pid",$id);
+		$this->db->where("cl_phc",$cl_phc);
 		$query = $this->db->get($this->tabel)->row_array();
 
 		if(!empty($query)){
@@ -33,8 +34,9 @@ class Pbk_model extends CI_Model {
 		$query->free_result();    
 	}
 
-    function get_puskesmas($limit=999999,$start=0){
+    function get_puskesmas($limit=999999,$start=0,$cl_phc=""){
     	$this->db->order_by('code','asc');
+    	if($cl_phc!="") $this->db->where('code',$cl_phc);
         $query = $this->db->get('cl_phc',$limit,$start);
         return $query->result();
     }
@@ -53,6 +55,7 @@ class Pbk_model extends CI_Model {
     function insert_entry()
     {
 		$data['cl_pid']			= $this->input->post('cl_pid');
+		$data['cl_phc']			= $this->input->post('cl_phc');
 		$data['nomor']			= $this->input->post('nomor');
 		$data['bpjs']			= $this->input->post('bpjs');
 		$data['nik']			= $this->input->post('nik');
@@ -71,7 +74,7 @@ class Pbk_model extends CI_Model {
 		}
     }
 
-    function update_entry($cl_pid)
+    function update_entry($cl_pid,$cl_phc)
     {
 		$data['nomor']			= $this->input->post('nomor');
 		$data['bpjs']			= $this->input->post('bpjs');
@@ -82,6 +85,7 @@ class Pbk_model extends CI_Model {
 		$data['modified_on']	= date("Y-m-d H:i:s");
 
 		$this->db->where('cl_pid',$cl_pid);
+		$this->db->where('cl_phc',$cl_phc);
 		if($this->db->update($this->tabel, $data)){
 			return true;
 		}else{
@@ -89,9 +93,10 @@ class Pbk_model extends CI_Model {
 		}
     }
 
-	function delete_entry($cl_pid)
+	function delete_entry($cl_pid, $cl_phc)
 	{
 		$this->db->where('cl_pid',$cl_pid);
+		$this->db->where('cl_phc',$cl_phc);
 
 		return $this->db->delete($this->tabel);
 	}

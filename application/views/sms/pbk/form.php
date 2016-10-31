@@ -13,7 +13,7 @@
   <?php echo $this->session->flashdata('alert_form')?>
 </div>
 <?php } ?>
-<form action="<?php echo base_url()?>sms/pbk/{action}/{cl_pid}" method="POST" name="">
+<form action="<?php echo base_url()?>sms/pbk/{action}/{cl_pid}/{cl_phc}" method="POST" name="">
   <div class="row">
     <!-- left column -->
     <div class="col-md-6">
@@ -28,6 +28,21 @@
             <button type="button" class="btn btn-success" onClick="document.location.href='<?php echo base_url()?>sms/pbk'">Kembali</button>
           </div>
           <div class="box-body">
+            <div class="form-group">
+              <label>Puskesmas</label>
+              <select name="cl_phc" class="form-control">
+                  <?php foreach ($phc as $row ) { ?>
+                    <option value="<?php echo $row->code; ?>" <?php 
+                      if(set_value('cl_phc')=="" && isset($cl_phc)){
+                        $phc = $cl_phc;
+                      }else{
+                        $phc = set_value('cl_phc');
+                      }
+                      if($phc==$row->code) echo " selected";
+                      ?>><?php echo $row->keyword; ?> : <?php echo $row->value; ?></option>
+                  <?php }?>
+              </select>
+                </div>
             <div class="form-group">
               <label>No RM</label>
               <input type="text" class="form-control" name="cl_pid" placeholder="No RM" <?php if($action=="edit") echo "readonly"; ?> value="<?php 
