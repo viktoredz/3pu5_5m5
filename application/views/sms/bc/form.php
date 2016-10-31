@@ -2,8 +2,8 @@
 
 <?php if(validation_errors()!=""){ ?>
 <div class="alert alert-warning alert-dismissable">
-	<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-	<h4>	<i class="icon fa fa-check"></i> Information!</h4>
+  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+  <h4>  <i class="icon fa fa-check"></i> Information!</h4>
   <?php echo validation_errors()?>
 </div>
 <?php } ?>
@@ -161,7 +161,7 @@
             </div>
          </div><!-- /.box-body -->
       </div><!-- /.box -->
-  	</div><!-- /.box -->
+    </div><!-- /.box -->
     <div class="col-md-6">
       <!-- general form elements -->
       <div class="box box-success" style="min-height:350px">
@@ -204,7 +204,7 @@
 </form>
 
 <script>
-	$(function () {	
+  $(function () { 
     $("#menu_esms").addClass("active");
     $("#menu_sms_bc").addClass("active");
 
@@ -267,7 +267,7 @@
       });
     });
 
-	});
+  });
 
 
 <?php if($action=="edit"){?>
@@ -276,6 +276,7 @@
       type  : "POST",
       datafields: [
       { name: 'id', type: 'string'},
+      { name: 'cl_phc', type: 'string'},
       { name: 'no_hp', type: 'string'},
       { name: 'nomor', type: 'string'},
       { name: 'nama', type: 'string'},
@@ -333,11 +334,11 @@
 
       if(row.length== undefined){
         var datarow = $("#jqxgrid_penerima").jqxGrid('getrowdata', row);
-        if(datarow != undefined) unselected(datarow.id,datarow.no_hp);
+        if(datarow != undefined) unselected(datarow.id,datarow.no_hp,datarow.cl_phc);
       }else{
         $.each( row, function( rows ) {
         var datarow = $("#jqxgrid_penerima").jqxGrid('getrowdata', rows);
-          if(datarow != undefined) unselected(datarow.id,datarow.no_hp);
+          if(datarow != undefined) unselected(datarow.id,datarow.no_hp,datarow.cl_phc);
         });        
       }
 
@@ -352,6 +353,7 @@
       type  : "POST",
       datafields: [
       { name: 'id', type: 'string'},
+      { name: 'cl_phc', type: 'string'},
       { name: 'no_hp', type: 'string'},
       { name: 'nomor', type: 'string'},
       { name: 'nama', type: 'string'},
@@ -408,11 +410,11 @@
 
       if(row.length== undefined){
         var datarow = $("#jqxgrid_pilih").jqxGrid('getrowdata', row);
-        if(datarow != undefined) selected(datarow.id,datarow.no_hp);
+        if(datarow != undefined) selected(datarow.id,datarow.no_hp,datarow.cl_phc);
       }else{
         $.each( row, function( rows ) {
         var datarow = $("#jqxgrid_pilih").jqxGrid('getrowdata', rows);
-          if(datarow != undefined) selected(datarow.id,datarow.no_hp);
+          if(datarow != undefined) selected(datarow.id,datarow.no_hp,datarow.cl_phc);
         });        
       }
 
@@ -421,13 +423,13 @@
       $("#jqxgrid_pilih").jqxGrid('clearselection');
     });
 
-    function unselected(cl_pid,no_hp){
-      $.post("<?php echo base_url().'sms/bc/remove_number/'.$id ?>/"+cl_pid,  function(){
+    function unselected(cl_pid,no_hp,cl_phc){
+      $.post("<?php echo base_url().'sms/bc/remove_number/'.$id ?>/"+cl_pid+"/"+cl_phc,  function(){
       });
     }
 
-    function selected(cl_pid,no_hp){
-      $.post("<?php echo base_url().'sms/bc/add_number/'.$id ?>/"+cl_pid+'/'+no_hp,  function(){
+    function selected(cl_pid,no_hp,cl_phc){
+      $.post("<?php echo base_url().'sms/bc/add_number/'.$id ?>/"+cl_pid+'/'+no_hp+"/"+cl_phc,  function(){
       });
     }
 <?php }?>

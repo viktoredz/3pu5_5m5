@@ -24,7 +24,7 @@ class Bc_model extends CI_Model {
     {
 		$this->db->select("sms_pbk.*,sms_grup.nama as grup");
 		$this->db->where("id_sms_bc",$id);
-		$this->db->join("sms_pbk","sms_pbk.cl_pid=sms_bc_tujuan.cl_pid");
+		$this->db->join("sms_pbk","sms_pbk.cl_pid=sms_bc_tujuan.cl_pid AND sms_pbk.cl_phc=sms_bc_tujuan.cl_phc");
 		$this->db->join("sms_grup","sms_grup.id_grup=sms_pbk.id_sms_grup","left");
 	    $query = $this->db->get("sms_bc_tujuan",$limit,$start);
     	return $query->result();
@@ -78,16 +78,18 @@ class Bc_model extends CI_Model {
         return $this->db->get_where($tabel, array('nomor'=>$data));
     }
 
-   function remove_number($id, $cl_pid){
+   function remove_number($id, $cl_pid, $cl_phc){
 		$data['id_sms_bc']	= $id;
 		$data['cl_pid']		= $cl_pid;
+		$data['cl_phc']		= $cl_phc;
 		$this->db->delete('sms_bc_tujuan', $data);
    }
 
-   function add_number($id, $cl_pid, $nomor){
+   function add_number($id, $cl_pid, $nomor, $cl_phc){
 		$data['id_sms_bc']		= $id;
 		$data['nomor']		= $nomor;
 		$data['cl_pid']		= $cl_pid;
+		$data['cl_phc']		= $cl_phc;
 		$this->db->insert('sms_bc_tujuan', $data);
    }
 
