@@ -21,7 +21,7 @@ class Smsdaemon extends CI_Controller {
 			ini_set('output_buffering', 'Off');
 			ini_set('implicit_flush', 'On');
 			
-			for($i=1;$i<5;$i++){
+			for($i=1;$i<12;$i++){
 				echo("\n".date("d-m-Y h:i:s") ." ".$i." ".$args." versi 1.0");
 				
 				$this->sms_reply($args);
@@ -44,6 +44,7 @@ class Smsdaemon extends CI_Controller {
 	function sms_send($nomor = "", $pesan="" ,$ID=""){
 		$data = array();
 		$time = date("Y-m-d H:i:s");
+		$data['CreatorID'] 			= "infokes";
 		$data['InsertIntoDB'] 		= $time;
 		$data['SendingDateTime'] 	= $time;
 		$data['SendingTimeOut'] 	= $time;
@@ -95,6 +96,11 @@ class Smsdaemon extends CI_Controller {
 			$pesan .= implode(",", $key)."\ncontoh:".$menu."<spasi>".$tmpt;
 		}
 
+		$time = date("Y-m-d H:i:s");
+		$data['CreatorID'] 			= "infokes";
+		$data['InsertIntoDB'] 		= $time;
+		$data['SendingDateTime'] 	= $time;
+		$data['SendingTimeOut'] 	= $time;
 		$data['DestinationNumber'] = $nomor;
 		$data['TextDecoded'] = $pesan;
 
@@ -104,7 +110,7 @@ class Smsdaemon extends CI_Controller {
 	function sms_reply($args = ""){
 		echo "\nsms.sms_reply ...\n";
 
-		$operator = "'*123#','*111#','V-Tri','+3'";
+		$operator = "'*123#','*111#','V-Tri','+3','TELKOMSEL','1818'";
 		//$operator = "'*123#'";
 
 		//jika sms blm di proses, bukan operator, kata pertama menu 
@@ -129,8 +135,7 @@ class Smsdaemon extends CI_Controller {
 	function sms_autoreply($args = ""){
 		echo "sms.autoteply ...\n";
 
-		$operator = "'*123#','*111#','V-Tri','+3'";
-		//$operator = "'*123#'";
+		$operator = "'*123#','*111#','V-Tri','+3','TELKOMSEL','1818'";
 
 		//jika sms blm di proses, bukan operator, kata pertama menu 
 		$this->db->where("Processed","false");
@@ -167,7 +172,7 @@ class Smsdaemon extends CI_Controller {
 	function sms_opini($args = ""){
 		echo "sms.opini ...\n";
 
-		$operator = "'*123#','*111#','V-Tri','+3','3'";
+		$operator = "'*123#','*111#','V-Tri','+3','TELKOMSEL','1818'";
 
 		//jika sms blm di proses, bukan operator, kata pertama opini, 
 		$this->db->select('ID, SUBSTRING_INDEX(`TextDecoded`," ",1) as `Kategori`,`SenderNumber`,`TextDecoded`,`sms_tipe`.`id_tipe`',false);
@@ -194,7 +199,7 @@ class Smsdaemon extends CI_Controller {
 	function sms_daftar($args = ""){
 		echo "sms.daftar ...\n";
 
-		$operator = "'*123#','*111#','V-Tri','+3','3'";
+		$operator = "'*123#','*111#','V-Tri','+3','TELKOMSEL','1818'";
 		$format   = "\nKetik: BYR<spasi>NIK<spasi>KD POLI<spasi>KD PUSKESMAS<spasi>DD-MM-YYYY\natau Ketik:BPJS<spasi>NO BPJS<spasi>KD POLI<spasi>KD PUSKESMAS<spasi>DD-MM-YYYY";
 
 		//jika sms blm di proses, bukan operator, BYR/BPJS daftar 
