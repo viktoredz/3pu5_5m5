@@ -115,7 +115,7 @@ class Smsdaemon extends CI_Controller {
 
 		//jika sms blm di proses, bukan operator, kata pertama menu 
 		$this->db->where("Processed","false");
-		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
+		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.") AND CHAR_LENGTH(SenderNumber)>=10");
 		$this->db->where("SUBSTRING_INDEX(TextDecoded,' ',1) NOT IN (SELECT `code` FROM `sms_info_menu`)");
 		$this->db->where("SUBSTRING_INDEX(TextDecoded,' ',1) NOT IN (SELECT `nama` FROM `sms_tipe` WHERE jenis='terima')");
 		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("UMUM","Umum","umum","BYR","BPJS","Byr","Bpjs","byr","bpjs")');
@@ -139,7 +139,7 @@ class Smsdaemon extends CI_Controller {
 
 		//jika sms blm di proses, bukan operator, kata pertama menu 
 		$this->db->where("Processed","false");
-		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
+		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.") AND CHAR_LENGTH(SenderNumber)>=10");
 		$this->db->where("SUBSTRING_INDEX(TextDecoded,' ',1) IN (SELECT `code` FROM `sms_info_menu`)");
 		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("UMUM","Umum","umum","BYR","BPJS","Byr","Bpjs","byr","bpjs")');
 		$inbox = $this->db->get("inbox")->result();
@@ -177,7 +177,7 @@ class Smsdaemon extends CI_Controller {
 		//jika sms blm di proses, bukan operator, kata pertama opini, 
 		$this->db->select('ID, SUBSTRING_INDEX(`TextDecoded`," ",1) as `Kategori`,`SenderNumber`,`TextDecoded`,`sms_tipe`.`id_tipe`',false);
 		$this->db->where("Processed","false");
-		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
+		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.") AND CHAR_LENGTH(SenderNumber)>=10");
 		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) IN (SELECT `nama` FROM `sms_tipe` WHERE jenis="terima")');
 		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) NOT IN ("UMUM","Umum","umum","BYR","BPJS","Byr","Bpjs","byr","bpjs")');
 		$this->db->join('sms_tipe','sms_tipe.nama=SUBSTRING_INDEX(`TextDecoded`," ", 1)','inner');
@@ -205,7 +205,7 @@ class Smsdaemon extends CI_Controller {
 		//jika sms blm di proses, bukan operator, BYR/BPJS daftar 
 		$this->db->select('ID, SUBSTRING_INDEX(`TextDecoded`," ",1) as `keyword`,`SenderNumber`,`TextDecoded`',false);
 		$this->db->where("Processed","false");
-		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.")");
+		$this->db->where("REPLACE(SenderNumber,'+62','') NOT IN (".$operator.") AND CHAR_LENGTH(SenderNumber)>=10");
 		$this->db->where('SUBSTRING_INDEX(`TextDecoded`," ",1) IN ("UMUM","Umum","umum","BYR","BPJS","Byr","Bpjs","byr","bpjs")');
 		$inbox = $this->db->get("inbox")->result_array();
 		foreach ($inbox as $rows) {
