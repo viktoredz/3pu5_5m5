@@ -61,6 +61,8 @@ class Inbox extends CI_Controller {
 
 			if(!empty($ord)) {
 				$this->db->order_by($ord, $this->input->post('sortorder'));
+			}else{
+				$this->db->order_by("ID", "DESC");
 			}
 		}
 		$rows = $this->inbox_model->get_data($this->input->post('recordstartindex'), $this->input->post('pagesize'));
