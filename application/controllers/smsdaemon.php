@@ -213,7 +213,7 @@ class Smsdaemon extends CI_Controller {
 		echo "sms.daftar ...\n";
 
 		$operator = "'*123#','*111#','V-Tri','+3','TELKOMSEL','1818'";
-		$format   = "\nKetik: DAFTAR<spasi>NIK<spasi>KODE POLI<spasi>KODE PUSKESMAS<spasi>DD-MM-YYYY";
+		$format   = "\nKetik: BPJS/BYR<spasi>No.BPJS/KJS/NIK<spasi>KODE POLI<spasi>PKC<spasi>TGL BEROBAT (DD-MM-YYYY)";
 
 		//jika sms blm di proses, bukan operator, BYR/BPJS daftar 
 		$this->db->select('ID, SUBSTRING_INDEX(`TextDecoded`," ",1) as `keyword`,`SenderNumber`,`TextDecoded`',false);
