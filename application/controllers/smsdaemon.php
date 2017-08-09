@@ -308,15 +308,15 @@ class Smsdaemon extends CI_Controller {
                 		$mana = 'bulan';
 	                }
 
-	                if (!isset($daftar_tanggal[2]) || $daftar_tanggal[2]!=date("Y") && $daftar_tanggal[2]!=(date("Y")+1)) {
+	                if (!isset($daftar_tanggal[2]) && $daftar_tanggal[2]!=date("Y") && $daftar_tanggal[2]!=(date("Y")+1)) {
 	                	$tgl_error = true;
-                		$mana = 'tahun';
+                		$mana = 'tahun '.$daftar_tanggal[2].'-'.date("Y").' ';
 	                }
                 }
                 
 
                 if($tgl_error){
-					$reply = $mana."-Maaf, format ".$mana." salah, gunakan: DD-MM-YYYY\nContoh: 01-02-2016 atau 31-12-2016";
+					$reply = "Maaf, format ".$mana." salah, gunakan: DD-MM-YYYY\nContoh: 01-02-2016 atau 31-12-2016";
 					$this->sms_send($rows['SenderNumber'],$reply,$rows['ID']);
 					continue;
                 }else{
