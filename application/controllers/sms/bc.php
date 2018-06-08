@@ -154,7 +154,12 @@ class Bc extends CI_Controller {
 				$field = $this->input->post('filterdatafield'.$i);
 				$value = $this->input->post('filtervalue'.$i);
 
-				$this->db->like('sms_pbk.'.$field,$value);
+				if($field=="grup"){
+					$this->db->like('sms_grup.nama',$value);
+				}else{
+					$this->db->like('sms_pbk.'.$field,$value);
+				}
+
 			}
 
 			if(!empty($ord)) {
@@ -171,7 +176,11 @@ class Bc extends CI_Controller {
 				$field = $this->input->post('filterdatafield'.$i);
 				$value = $this->input->post('filtervalue'.$i);
 
-				$this->db->like('sms_pbk.'.$field,$value);
+				if($field=="grup"){
+					$this->db->like('sms_grup.nama',$value);
+				}else{
+					$this->db->like('sms_pbk.'.$field,$value);
+				}
 			}
 
 			if(!empty($ord)) {
