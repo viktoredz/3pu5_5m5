@@ -89,7 +89,7 @@ class Cli_model extends CI_Model {
                     'nomor'     => substr($dt['nohp'],0,20),
                     'nik'       => $dt['nik'],
                     'alamat'    => $dt['alamat'],
-                    'nama'      => $dt['nama_lengkap']
+                    'nama'      => isset($dt['nama_lengkap']) ? $dt['nama_lengkap'] : '-'
                 );
             }
             if(isset($dt['id'])){
