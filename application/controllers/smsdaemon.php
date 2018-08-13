@@ -26,9 +26,9 @@ class Smsdaemon extends CI_Controller {
 				
 				$this->sms_reply($args);
 
-				$this->sms_autoreply($args);
-
 				$this->sms_opini($args);
+
+				$this->sms_autoreply($args);
 
 				$this->sms_broadcast($args);
 				
