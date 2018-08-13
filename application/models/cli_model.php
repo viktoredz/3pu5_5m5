@@ -85,10 +85,10 @@ class Cli_model extends CI_Model {
                 );
             }else{
                 $pbk = array(
-                    'bpjs'      => $dt['no_bpjs'],
-                    'nomor'     => substr($dt['nohp'],0,20),
-                    'nik'       => $dt['nik'],
-                    'alamat'    => $dt['alamat'],
+                    'bpjs'      => isset($dt['no_bpjs']) ? $dt['no_bpjs'] : '-',
+                    'nomor'     => isset($dt['nohp']) ? substr($dt['nohp'],0,20) : '',
+                    'nik'       => isset($dt['nik']) ? $dt['nik'] : '-',
+                    'alamat'    => isset($dt['alamat']) ? $dt['alamat'] : '-',
                     'nama'      => isset($dt['nama_lengkap']) ? $dt['nama_lengkap'] : '-'
                 );
             }
