@@ -92,10 +92,14 @@ class Cli_model extends CI_Model {
                     'nama'      => $dt['nama_lengkap']
                 );
             }
-            $this->db->where('cl_pid',$dt['id']);
-            $this->db->where('cl_phc',$cl_phc);
-            if($this->db->update('sms_pbk',$pbk)){
-                return "update";
+            if(isset($dt['id'])){
+                $this->db->where('cl_pid',$dt['id']);
+                $this->db->where('cl_phc',$cl_phc);
+                if($this->db->update('sms_pbk',$pbk)){
+                    return "update";
+                }else{
+                    return "error";
+                }
             }else{
                 return "error";
             }
