@@ -107,7 +107,7 @@ class Cli extends CI_Controller {
 				$register = $this->cli_model->register($dt,$cl_phc);
 				$count++;
 				if($this->input->is_cli_request()) {
-					echo "\n".$count." -> ".$cl_phc." :: ".$dt['id'].":".$register;
+					echo "\n".$count." -> ".$cl_phc." :: ".(isset($dt['id']) ? $dt['id']:'-').":".$register;
 				}
 			}
 			echo "<br>".$cl_phc." synced: ".$count;
