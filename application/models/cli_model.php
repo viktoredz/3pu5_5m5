@@ -55,54 +55,57 @@ class Cli_model extends CI_Model {
     }
 
     function register($dt,$cl_phc){
-
-        $this->db->where('cl_phc',$cl_phc);
-        $this->db->where('cl_pid',$dt['id']);
-        $check = $this->db->get('sms_pbk')->row();
-        if(empty($check->cl_pid)){
-            $pbk = array(
-                'cl_pid'    => $dt['id'],
-                'cl_phc'    => $cl_phc,
-                'bpjs'      => $dt['no_bpjs'],
-                'nomor'     => substr($dt['nohp'],0,20),
-                'alamat'    => $dt['alamat'],
-                'nik'       => $dt['nik'],
-                'nama'      => $dt['nama_lengkap']
-            );
-            if($this->db->insert('sms_pbk',$pbk)){
-                return "insert";
-            }else{
-                return "error";
-            }
-
-        }else{
-            if(isset($dt['nohp']) && strlen($dt['nohp']) < 10){
+        if(isset($dt['id'])){
+            $this->db->where('cl_phc',$cl_phc);
+            $this->db->where('cl_pid',$dt['id']);
+            $check = $this->db->get('sms_pbk')->row();
+            if(empty($check->cl_pid)){
                 $pbk = array(
+                    'cl_pid'    => $dt['id'],
+                    'cl_phc'    => $cl_phc,
                     'bpjs'      => $dt['no_bpjs'],
+                    'nomor'     => substr($dt['nohp'],0,20),
                     'alamat'    => $dt['alamat'],
                     'nik'       => $dt['nik'],
                     'nama'      => $dt['nama_lengkap']
                 );
-            }else{
-                $pbk = array(
-                    'bpjs'      => isset($dt['no_bpjs']) ? $dt['no_bpjs'] : '-',
-                    'nomor'     => isset($dt['nohp']) ? substr($dt['nohp'],0,20) : '',
-                    'nik'       => isset($dt['nik']) ? $dt['nik'] : '-',
-                    'alamat'    => isset($dt['alamat']) ? $dt['alamat'] : '-',
-                    'nama'      => isset($dt['nama_lengkap']) ? $dt['nama_lengkap'] : '-'
-                );
-            }
-            if(isset($dt['id'])){
-                $this->db->where('cl_pid',$dt['id']);
-                $this->db->where('cl_phc',$cl_phc);
-                if($this->db->update('sms_pbk',$pbk)){
-                    return "update";
+                if($this->db->insert('sms_pbk',$pbk)){
+                    return "insert";
                 }else{
                     return "error";
                 }
+
             }else{
-                return "error";
+                if(isset($dt['nohp']) && strlen($dt['nohp']) < 10){
+                    $pbk = array(
+                        'bpjs'      => $dt['no_bpjs'],
+                        'alamat'    => $dt['alamat'],
+                        'nik'       => $dt['nik'],
+                        'nama'      => $dt['nama_lengkap']
+                    );
+                }else{
+                    $pbk = array(
+                        'bpjs'      => isset($dt['no_bpjs']) ? $dt['no_bpjs'] : '-',
+                        'nomor'     => isset($dt['nohp']) ? substr($dt['nohp'],0,20) : '',
+                        'nik'       => isset($dt['nik']) ? $dt['nik'] : '-',
+                        'alamat'    => isset($dt['alamat']) ? $dt['alamat'] : '-',
+                        'nama'      => isset($dt['nama_lengkap']) ? $dt['nama_lengkap'] : '-'
+                    );
+                }
+                if(isset($dt['id'])){
+                    $this->db->where('cl_pid',$dt['id']);
+                    $this->db->where('cl_phc',$cl_phc);
+                    if($this->db->update('sms_pbk',$pbk)){
+                        return "update";
+                    }else{
+                        return "error";
+                    }
+                }else{
+                    return "error";
+                }
             }
+        }else{
+            return "error";
         }
     }
 
