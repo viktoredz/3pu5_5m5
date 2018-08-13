@@ -76,7 +76,7 @@ class Cli_model extends CI_Model {
             }
 
         }else{
-            if(strlen($dt['nohp']) < 10){
+            if(isset($dt['nohp']) && strlen($dt['nohp']) < 10){
                 $pbk = array(
                     'bpjs'      => $dt['no_bpjs'],
                     'alamat'    => $dt['alamat'],
